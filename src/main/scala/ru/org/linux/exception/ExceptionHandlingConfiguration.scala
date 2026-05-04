@@ -21,7 +21,6 @@ import org.springframework.context.annotation.{Bean, Configuration}
 import org.springframework.scheduling.TaskScheduler
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler
 import ru.org.linux.spring.SiteConfig
-import sttp.client4.SttpClientException
 
 import java.io.{PrintWriter, StringWriter}
 import java.util.concurrent.Executors
@@ -38,20 +37,13 @@ class ExceptionHandlingConfiguration extends StrictLogging:
 
     scheduler.setErrorHandler(ex =>
       val text = new StringBuilder("Periodic task failed\n\n")
-
-      val cleanException =
-        ex match
-          case e: SttpClientException =>
-            e.cause
-          case other =>
-            other
-
+      
       val exceptionStackTrace = new StringWriter
-      cleanException.printStackTrace(new PrintWriter(exceptionStackTrace))
+      ex.printStackTrace(new PrintWriter(exceptionStackTrace))
       text.append(exceptionStackTrace.toString)
 
-      logger.warn("Periodic task failed", cleanException)
+      logger.warn("Periodic task failed", ex)
 
-      exceptionMailingActor ! ExceptionMailingActor.Report(cleanException.getClass, cleanException.toString()))
+      exceptionMailingActor ! ExceptionMailingActor.Report(ex.getClass, ex.toString()))
 
     scheduler

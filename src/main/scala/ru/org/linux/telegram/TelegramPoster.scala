@@ -48,13 +48,21 @@ class TelegramPoster(
             s"${topic.getTitleUnescaped} ${tags.map("#" + _.name.filterNot(_ == ' ')).mkString(" ")}\n\n${config
                 .getSecureUrlWithoutSlash + topic.getLink}"
 
-          post(topic, text)
+          try
+            post(topic, text)
+          catch
+            case e: SttpClientException =>
+              throw new TelegramHttpFailedException("Telegram post failed", e)
       case None =>
         logger.info("No hot topics :-(")
 
         dao.topicToDelete match
           case Some(toDelete) =>
-            delete(toDelete, toDelete)
+            try
+              delete(toDelete, toDelete)
+            catch
+              case e: SttpClientException =>
+                throw new TelegramHttpFailedException("Telegram post delete failed", e)
           case None =>
 
   private def sendWithRetry(request: Request[Either[String, String]]): (Response[Either[String, String]], String) =
@@ -111,3 +119,7 @@ class TelegramPoster(
       throw new TelegramBadStatusException(s"Delete failed via $via! status=${response.code}")
 
 class TelegramBadStatusException(message: String) extends RuntimeException(message)
+
+// в SttpClientException есть URL с токеном, по этому его пропускаем
+class TelegramHttpFailedException(message: String, e: SttpClientException)
+  extends RuntimeException(message, e.cause)
