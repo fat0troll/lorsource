@@ -38,7 +38,7 @@ input, select {
 }
 
 textarea:focus, input:focus, select:focus {
-  border: none;
+  border: 1px solid transparent;
   outline: 2px solid var(--link-color);
 }
 
