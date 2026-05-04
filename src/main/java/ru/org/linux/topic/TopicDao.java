@@ -439,6 +439,15 @@ public class TopicDao {
     );
   }
 
+  public int getUncommitedCount(int sectionId) {
+    Integer count = jdbcTemplate.queryForObject(
+            "SELECT count(*) FROM topics,groups,sections WHERE section=sections.id " +
+                    "AND sections.moderate AND NOT draft AND topics.groupid=groups.id AND NOT deleted " +
+                    "AND NOT topics.moderate AND postdate>(CURRENT_TIMESTAMP-'3 month'::interval) " +
+                    "AND section=?", Integer.class, sectionId);
+    return count != null ? count : 0;
+  }
+
   public boolean hasDrafts(User author) {
     List<Integer> res = jdbcTemplate.queryForList(
             "select id FROM topics WHERE draft AND userid=? LIMIT 1",

@@ -337,4 +337,6 @@ class TopicService(topicDao: TopicDao, msgbaseDao: MsgbaseDao, sectionService: S
       sectionService.getSection(p._1) -> p._2.toInt
     }.toVector
   }
+
+  def getUncommitedCount(section: Section): Int = topicDao.getUncommitedCount(section.id)
 }

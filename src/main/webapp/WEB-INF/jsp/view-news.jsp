@@ -47,7 +47,9 @@
       <a class="btn btn-default" href="${section.sectionLink}">Новые темы</a>
     </c:if>
 
-    <a class="btn btn-default" href="/view-all.jsp?section=${section.id}">Неподтверждённые</a>
+    <c:if test="${uncommitedCount > 0}">
+      <a class="btn btn-default" href="/view-all.jsp?section=${section.id}">Неподтверждённые: ${uncommitedCount}</a>
+    </c:if>
   </c:if>
 
   <c:if test="${filters != null}">

@@ -97,8 +97,9 @@ object TopicListController {
 
 @Controller
 class TopicListController(sectionService: SectionService, topicListService: TopicListService,
-                          prepareService: TopicPrepareService, tagService: TagService,
-                          groupService: GroupService, groupPermissionService: GroupPermissionService) extends StrictLogging {
+                           prepareService: TopicPrepareService, tagService: TagService,
+                           groupService: GroupService, groupPermissionService: GroupPermissionService,
+                           topicService: TopicService) extends StrictLogging {
   private def mainTopicsFeedHandler(section: Section, topicListForm: TopicListRequest,
                                     group: Option[Group]): Future[ModelAndView] = MaybeAuthorized { implicit currentUserOpt =>
     val deadline = TagPageController.Timeout.fromNow
@@ -153,6 +154,10 @@ class TopicListController(sectionService: SectionService, topicListService: Topi
     }
 
     modelAndView.addObject("addUrl", addUrl)
+
+    if (section.isPremoderated) {
+      modelAndView.addObject("uncommitedCount", topicService.getUncommitedCount(section))
+    }
 
     activeTagsF.map { activeTags =>
       if (activeTags.nonEmpty) {
