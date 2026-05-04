@@ -79,7 +79,7 @@
 <div class="group">
     ${preparedMessage.section.title} — ${preparedMessage.group.title}
   <c:if test="${not message.commited and preparedMessage.section.premoderated}">
-    <span>(не подтверждено)</span>
+    <c:out value=" "/><span>(не подтверждено)</span>
   </c:if>
 </div>
 </c:if>
