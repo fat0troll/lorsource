@@ -97,7 +97,7 @@
   <lor:news
           preparedMessage="${msg.preparedTopic}"
           messageMenu="${msg.topicMenu}"
-          multiPortal="${section==0}"
+          multiPortal="true"
           minorAsMajor="true"
           moderateMode="false"/>
 </c:forEach>

@@ -112,7 +112,7 @@
         <lor:news
                 preparedMessage="${msg.preparedTopic}"
                 messageMenu="${msg.topicMenu}"
-                multiPortal="false"
+                multiPortal="true"
                 minorAsMajor="true"
                 moderateMode="false"/>
       </c:forEach>

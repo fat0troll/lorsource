@@ -73,7 +73,7 @@
 <c:forEach var="msg" items="${messages}">
   <lor:news messageMenu="${msg.topicMenu}"
           preparedMessage="${msg.preparedTopic}"
-          multiPortal="<%= sectionid==0 %>"
+          multiPortal="true"
           moderateMode="true"/>
 </c:forEach>
 <%

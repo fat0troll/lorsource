@@ -116,7 +116,7 @@
 
 <c:forEach var="msg" items="${news}">
   <lorDir:news preparedMessage="${msg.preparedTopic}" messageMenu="${msg.topicMenu}"
-               multiPortal="${template.prof.showGalleryOnMain}" moderateMode="false"/>
+               multiPortal="true" moderateMode="false"/>
 </c:forEach>
 
 <c:if test="${not empty briefNews}">
