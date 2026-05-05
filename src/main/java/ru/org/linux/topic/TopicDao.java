@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.org.linux.group.Group;
 import ru.org.linux.section.SectionScrollModeEnum;
-import ru.org.linux.section.SectionService;
 import ru.org.linux.site.MessageNotFoundException;
 import ru.org.linux.user.User;
 import ru.org.linux.user.UserDao;
@@ -48,8 +47,6 @@ import java.util.Optional;
 
 @Repository
 public class TopicDao {
-  @Autowired
-  private SectionService sectionService;
 
 
   /**
@@ -238,18 +235,14 @@ public class TopicDao {
     jdbcTemplate.update("UPDATE topics SET moderate='f',commitby=NULL,commitdate=NULL WHERE id=?", msg.getId());
   }
 
-  public Topic getPreviousMessage(Topic message, User currentUser) {
+  public Topic getPreviousMessage(Topic message, User currentUser, SectionScrollModeEnum scrollMode) {
     if (message.isSticky()) {
       return null;
     }
 
-    SectionScrollModeEnum sectionScrollMode;
-
-    sectionScrollMode = sectionService.getScrollMode(message.getSectionId());
-
     List<Integer> res;
 
-    switch (sectionScrollMode) {
+    switch (scrollMode) {
       case SECTION:
         res = jdbcTemplate.queryForList(
                 "SELECT topics.id as msgid " +
@@ -306,18 +299,14 @@ public class TopicDao {
     }
   }
 
-  public Topic getNextMessage(Topic message, User currentUser) {
+  public Topic getNextMessage(Topic message, User currentUser, SectionScrollModeEnum scrollMode) {
     if (message.isSticky()) {
       return null;
     }
 
-    SectionScrollModeEnum sectionScrollMode;
-
-    sectionScrollMode = sectionService.getScrollMode(message.getSectionId());
-
     List<Integer> res;
 
-    switch (sectionScrollMode) {
+    switch (scrollMode) {
       case SECTION:
         res = jdbcTemplate.queryForList(
                 "SELECT topics.id as msgid " +

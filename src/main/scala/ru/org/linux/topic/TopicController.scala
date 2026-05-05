@@ -326,26 +326,26 @@ class TopicController(sectionService: SectionService, topicDao: TopicDao, prepar
 
   private def loadTopicScroller(params: mutable.Map[String, AnyRef], topic: Topic, currentUser: Option[User],
                                 useIgnoreList: Boolean): Unit = {
+    val scrollMode = sectionService.getScrollMode(topic.sectionId)
+
     val (prevMessage, nextMessage) = if (useIgnoreList) {
-      (topicDao.getPreviousMessage(topic, currentUser.orNull), topicDao.getNextMessage(topic, currentUser.orNull))
+      (topicDao.getPreviousMessage(topic, currentUser.orNull, scrollMode), topicDao.getNextMessage(topic, currentUser.orNull, scrollMode))
     } else {
-      (topicDao.getPreviousMessage(topic, null), topicDao.getNextMessage(topic, null))
+      (topicDao.getPreviousMessage(topic, null, scrollMode), topicDao.getNextMessage(topic, null, scrollMode))
     }
 
     params.put("prevMessage", prevMessage)
     params.put("nextMessage", nextMessage)
 
-    val sectionScroller = sectionService.getScrollMode(topic.sectionId)
-
     val topScroller = if (prevMessage == null && nextMessage == null) {
       false
     } else {
-      sectionScroller != SectionScrollModeEnum.NO_SCROLL
+      scrollMode != SectionScrollModeEnum.NO_SCROLL
     }
 
     params.put("topScroller", Boolean.box(topScroller))
 
-    val bottomScroller = sectionScroller != SectionScrollModeEnum.NO_SCROLL
+    val bottomScroller = scrollMode != SectionScrollModeEnum.NO_SCROLL
 
     params.put("bottomScroller", Boolean.box(bottomScroller))
   }

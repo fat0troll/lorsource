@@ -44,6 +44,9 @@ class TopicDaoIntegrationTest {
   @Autowired
   var topicDao: TopicDao = scala.compiletime.uninitialized
 
+  @Autowired
+  var sectionService: SectionService = scala.compiletime.uninitialized
+
   @Test
   def testLoadTopic(): Unit = {
     val topic = topicDao.getById(TestTopic)
@@ -55,9 +58,10 @@ class TopicDaoIntegrationTest {
   @Test
   def testNextPrev():Unit = {
     val topic = topicDao.getById(TestTopic)
+    val scrollMode = sectionService.getScrollMode(topic.sectionId)
 
-    val nextTopic = topicDao.getNextMessage(topic, null)
-    val prevTopic = topicDao.getPreviousMessage(topic, null)
+    val nextTopic = topicDao.getNextMessage(topic, null, scrollMode)
+    val prevTopic = topicDao.getPreviousMessage(topic, null, scrollMode)
 
     Assert.assertNotSame(topic.id, nextTopic.id)
     Assert.assertNotSame(topic.id, prevTopic.id)
