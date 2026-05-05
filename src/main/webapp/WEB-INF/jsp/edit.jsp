@@ -42,14 +42,10 @@
     });
   });
 
-  $script.ready("jquery", function() {
-    $script("/js/jquery-ui-1.13.2.custom/jquery-ui.min.js", "jqueryui");
-  });
-  $script.ready("jqueryui", function() {
+  $script.ready("plugins", function() {
     $script("/js/tagsAutocomplete.js");
   });
 </script>
-<link rel="stylesheet" href="/js/jquery-ui-1.13.2.custom/jquery-ui.min.css">
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 <c:if test="${info!=null}">
   <h1>${info}</h1>

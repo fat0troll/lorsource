@@ -13,49 +13,86 @@
  *    limitations under the License.
  */
 
-$(function() {
-        function split( val ) {
-            return val.split( /,\s*/ );
-        }
-        function extractLast( term ) {
-            return split( term ).pop();
-        }
+(function() {
+    var idCounter = 0;
 
-        $('[data-tags-autocomplete]')
-            // don't navigate away from the field on tab when selecting an item
-            .on( "keydown", function( event ) {
-                if ( event.keyCode === $.ui.keyCode.TAB &&
-                        $( this ).data( "autocomplete" ).menu.active ) {
-                    event.preventDefault();
-                }
-            })
-            .autocomplete({
-                source: function( request, response ) {
-                    $.getJSON( "/tags", {
-                        term: extractLast( request.term )
-                    }, response );
-                },
-                search: function() {
-                    // custom minLength
-                    var term = extractLast( this.value );
-                    if ( term.length < 2 ) {
-                        return false;
+    function ensureId(el) {
+        if (!el.id) {
+            el.id = "tagsAC_" + (++idCounter);
+        }
+        return el.id;
+    }
+
+    function fetchTags(query) {
+        return fetch("/tags?term=" + encodeURIComponent(query))
+            .then(function(r) { return r.json(); })
+            .catch(function() { return []; });
+    }
+
+    function initMulti(input) {
+        new window.autoComplete({
+            selector: "#" + ensureId(input),
+            threshold: 2,
+            data: {
+                src: fetchTags,
+                cache: false
+            },
+            query: function(query) {
+                var parts = query.split(/,\s*/);
+                return parts[parts.length - 1].trim();
+            },
+            resultsList: {
+                class: "autoComplete_list",
+                maxResults: 10,
+                tabSelect: true
+            },
+            resultItem: {
+                class: "autoComplete_result",
+                highlight: true
+            },
+            events: {
+                input: {
+                    selection: function(event) {
+                        var val = event.detail.selection.value;
+                        var parts = input.value.split(/,\s*/);
+                        parts.pop();
+                        parts.push(val);
+                        input.value = parts.join(", ") + ", ";
                     }
-                },
-                focus: function() {
-                    // prevent value inserted on focus
-                    return false;
-                },
-                select: function( event, ui ) {
-                    var terms = split( this.value );
-                    // remove the current input
-                    terms.pop();
-                    // add the selected item
-                    terms.push( ui.item.value );
-                    // add placeholder to get the comma-and-space at the end
-                    terms.push( "" );
-                    this.value = terms.join( ", " );
-                    return false;
                 }
-            });
+            }
+        });
+    }
+
+    function initSingle(input) {
+        new window.autoComplete({
+            selector: "#" + ensureId(input),
+            threshold: 2,
+            data: {
+                src: fetchTags,
+                cache: false
+            },
+            resultsList: {
+                class: "autoComplete_list",
+                maxResults: 10,
+                tabSelect: true
+            },
+            resultItem: {
+                class: "autoComplete_result",
+                highlight: true
+            },
+            events: {
+                input: {
+                    selection: function(event) {
+                        input.value = event.detail.selection.value;
+                    }
+                }
+            }
+        });
+    }
+
+    $(function() {
+        document.querySelectorAll("[data-tags-autocomplete]").forEach(initMulti);
+        document.querySelectorAll("[data-tags-autocomplete-single]").forEach(initSingle);
     });
+})();

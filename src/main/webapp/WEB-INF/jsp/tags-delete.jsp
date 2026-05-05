@@ -22,42 +22,10 @@
 <title>Удаление метки</title>
 <link rel="parent" title="Linux.org.ru" href="/">
 <script type="text/javascript">
-  $script.ready("jquery", function() {
-    $script("/js/jquery-ui-1.13.2.custom/jquery-ui.min.js", "jqueryui");
+  $script.ready("plugins", function() {
+    $script("/js/tagsAutocomplete.js");
   });
-
-  $script.ready("jqueryui", function() {
-    $( "#tagName" )
-            .on( "keydown", function( event ) {
-              if ( event.keyCode === $.ui.keyCode.TAB &&
-                      $( this ).data( "autocomplete" ).menu.active ) {
-                event.preventDefault();
-              }
-            })
-            .autocomplete({
-              source: function( request, response ) {
-                $.getJSON( "/tags", {
-                  term: request.term
-                }, response );
-              },
-              search: function() {
-                // custom minLength
-                if ( this.value.length < 2 ) {
-                  return false;
-                }
-              },
-              focus: function() {
-                // prevent value inserted on focus
-                return false;
-              },
-              select: function( event, ui ) {
-                this.value = ui.item.value;
-                return false;
-              }
-            });
-  });
- </script>
-<link rel="stylesheet" href="/js/jquery-ui-1.13.2.custom/jquery-ui.min.css">
+</script>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 
 <h1>Удаление метки «${tagRequestDelete.oldTagName}»</h1>
@@ -72,7 +40,7 @@
   <c:if test="${not synonym}">
   <div class="control-group">
    <label for="tagName">Метка, которой нужно заменить удаляемую (пусто - удалить без замены):</label>
-   <form:input autofocus="autofocus" autocapitalize="off" id="tagName" path="tagName" style="width: 40em" />
+   <form:input autofocus="autofocus" autocapitalize="off" data-tags-autocomplete-single="data-tags-autocomplete-single" id="tagName" path="tagName" style="width: 40em" />
   </div>
 
   <div class="control-group">

@@ -33,6 +33,7 @@
     <circe.version>0.14.15</circe.version>
     <twemoji.version>16.0.1</twemoji.version>
     <tippy.version>6.3.7</tippy.version>
+    <autocomplete.version>10.2.10</autocomplete.version>
     <popperjs.version>2.11.8</popperjs.version>
     <sttp.version>4.0.23</sttp.version>
     <flexmark.version>0.64.8</flexmark.version>
@@ -445,6 +446,20 @@
 
     </dependency>
 
+    <dependency>
+      <groupId>org.webjars.npm</groupId>
+      <artifactId>github-com-tarekraafat-autocomplete-js</artifactId>
+      <version>${autocomplete.version}</version>
+
+      <exclusions>
+        <exclusion>
+          <groupId>*</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+      </exclusions>
+
+    </dependency>
+
     <!-- MarkDown implementation -->
     <dependency>
       <groupId>com.vladsch.flexmark</groupId>
@@ -778,6 +793,7 @@
                     <file name="META-INF/resources/webjars/js-cookie/${js-cookie.version}/dist/js.cookie.min.js"/>
                     <file name="META-INF/resources/webjars/twemoji__api/${twemoji.version}/dist/twemoji.min.js"/>
                     <file name="META-INF/resources/webjars/swiffy-slider/${swiffy-slider.version}/dist/js/swiffy-slider.min.js"/>
+                    <file name="META-INF/resources/webjars/github-com-tarekraafat-autocomplete-js/${autocomplete.version}/autoComplete.min.js"/>
                   </filelist>
                 </concat>
               </tasks>
@@ -928,11 +944,16 @@
                   <version>${popperjs.version}</version>
                 </artifactItem>
                 <artifactItem>
-                  <groupId>org.webjars.npm</groupId>
-                  <artifactId>tippy.js</artifactId>
-                  <version>${tippy.version}</version>
-                </artifactItem>
-              </artifactItems>
+                   <groupId>org.webjars.npm</groupId>
+                   <artifactId>tippy.js</artifactId>
+                   <version>${tippy.version}</version>
+                 </artifactItem>
+                 <artifactItem>
+                   <groupId>org.webjars.npm</groupId>
+                   <artifactId>github-com-tarekraafat-autocomplete-js</artifactId>
+                   <version>${autocomplete.version}</version>
+                 </artifactItem>
+               </artifactItems>
               <outputDirectory>${project.build.directory}/${project.build.finalName}/js/</outputDirectory>
             </configuration>
           </execution>
