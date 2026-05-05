@@ -72,7 +72,7 @@ class LorLinkRenderer(siteConfig: SiteConfig, topicDao: TopicDao, commentDao: Co
     }
 
     if (url.isMessageUrl) {
-      topicDao.findById(url.getMessageId).toScala match {
+      topicDao.findById(url.getMessageId) match {
         case Some(message) =>
           val deleted = if (url.isCommentUrl && !message.deleted) {
             try {

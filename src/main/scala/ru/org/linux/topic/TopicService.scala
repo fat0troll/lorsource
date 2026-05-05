@@ -333,8 +333,8 @@ class TopicService(topicDao: TopicDao, msgbaseDao: MsgbaseDao, sectionService: S
   def getById(id: Int): Topic = topicDao.getById(id)
 
   def getUncommitedCounts: Seq[(Section, Int)] = {
-    topicDao.getUncommitedCounts.asScala.view.map { p =>
-      sectionService.getSection(p._1) -> p._2.toInt
+    topicDao.getUncommitedCounts.view.map { p =>
+      sectionService.getSection(p._1) -> p._2
     }.toVector
   }
 

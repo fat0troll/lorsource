@@ -116,7 +116,7 @@ class DeleteService(commentDao: CommentDao, userService: UserService, userEventS
                        (implicit currentUser: AuthorizedSession): DeleteCommentResult = transactional() { _ =>
     assert(currentUser.moderator, "Только модератор может выполнять массовое удаление")
 
-    val topics = topicDao.getAllByIPForUpdate(ip, timeDelta).asScala.map(_.toInt)
+    val topics = topicDao.getAllByIPForUpdate(ip, timeDelta)
     val comments = commentDao.getCommentsByIPAddressForUpdate(ip, timeDelta).asScala.map(_.toInt)
 
     massDelete(currentUser.user, topics, comments, reason)
@@ -137,7 +137,7 @@ class DeleteService(commentDao: CommentDao, userService: UserService, userEventS
 
       userService.block(user, currentUser.user, reason)
 
-      val topics = topicDao.getUserTopicForUpdate(user).asScala.map(_.toInt)
+      val topics = topicDao.getUserTopicForUpdate(user)
       val comments = commentDao.getAllByUserForUpdate(user).asScala.map(_.toInt)
 
       massDelete(currentUser.user, topics, comments, "Блокировка пользователя с удалением сообщений", notifyUser = false)

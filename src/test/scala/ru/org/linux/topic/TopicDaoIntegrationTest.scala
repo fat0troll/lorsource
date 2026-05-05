@@ -63,8 +63,10 @@ class TopicDaoIntegrationTest {
     val nextTopic = topicDao.getNextMessage(topic, null, scrollMode)
     val prevTopic = topicDao.getPreviousMessage(topic, null, scrollMode)
 
-    Assert.assertNotSame(topic.id, nextTopic.id)
-    Assert.assertNotSame(topic.id, prevTopic.id)
+    Assert.assertTrue(nextTopic.isDefined)
+    Assert.assertTrue(prevTopic.isDefined)
+    Assert.assertNotSame(topic.id, nextTopic.get.id)
+    Assert.assertNotSame(topic.id, prevTopic.get.id)
   }
 }
 
@@ -88,7 +90,7 @@ class TopicDaoIntegrationTestConfiguration {
   def sectionDao(ds: DataSource) = new SectionDaoImpl(ds)
 
   @Bean
-  def topicDao = new TopicDao()
+  def topicDao(ds: DataSource) = new TopicDao(ds)
 
   @Bean
   def userDao(dataSource: DataSource) = new UserDao(dataSource)

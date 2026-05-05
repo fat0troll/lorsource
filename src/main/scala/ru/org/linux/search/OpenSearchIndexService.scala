@@ -133,7 +133,7 @@ class OpenSearchIndexService(sectionService: SectionService, groupService: Group
   def reindexMonth(year: Int, month: Int):Unit = {
     val topicIds = topicDao.getMessageForMonth(year, month)
 
-    for (topicId <- topicIds.asScala) {
+    for (topicId <- topicIds) {
       reindexMessage(topicId, withComments = true)
     }
   }

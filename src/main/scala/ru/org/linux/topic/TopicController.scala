@@ -334,10 +334,10 @@ class TopicController(sectionService: SectionService, topicDao: TopicDao, prepar
       (topicDao.getPreviousMessage(topic, null, scrollMode), topicDao.getNextMessage(topic, null, scrollMode))
     }
 
-    params.put("prevMessage", prevMessage)
-    params.put("nextMessage", nextMessage)
+    params.put("prevMessage", prevMessage.orNull)
+    params.put("nextMessage", nextMessage.orNull)
 
-    val topScroller = if (prevMessage == null && nextMessage == null) {
+    val topScroller = if (prevMessage.isEmpty && nextMessage.isEmpty) {
       false
     } else {
       scrollMode != SectionScrollModeEnum.NO_SCROLL
