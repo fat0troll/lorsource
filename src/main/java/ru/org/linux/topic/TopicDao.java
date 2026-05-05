@@ -25,7 +25,6 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import ru.org.linux.group.Group;
-import ru.org.linux.msgbase.MsgbaseDao;
 import ru.org.linux.section.SectionScrollModeEnum;
 import ru.org.linux.section.SectionService;
 import ru.org.linux.site.MessageNotFoundException;
@@ -52,8 +51,6 @@ public class TopicDao {
   @Autowired
   private SectionService sectionService;
 
-  @Autowired
-  private MsgbaseDao msgbaseDao; // TODO move to TopicService
 
   /**
    * Запрос получения полной информации о топике
@@ -398,8 +395,8 @@ public class TopicDao {
     jdbcTemplate.update("UPDATE topics SET groupid=?,lastmod=CURRENT_TIMESTAMP WHERE id=?", changeGroupId, msg.getId());
   }
 
-  @Transactional(rollbackFor = Exception.class, propagation = Propagation.REQUIRED)
-  public void moveTopic(Topic msg, Group newGrp, Optional<String> moveInfo) {
+  @Transactional(rollbackFor = Exception.class, propagation = Propagation.MANDATORY)
+  public void moveTopic(Topic msg, Group newGrp) {
     int oldId = jdbcTemplate.queryForObject("SELECT groupid FROM topics WHERE id=? FOR UPDATE", Integer.class, msg.getId());
 
     if (oldId==newGrp.getId()) {
@@ -411,8 +408,6 @@ public class TopicDao {
     if (!newGrp.isLinksAllowed()) {
       jdbcTemplate.update("UPDATE topics SET linktext=null, url=null WHERE id=?", msg.getId());
     }
-
-    moveInfo.ifPresent(info -> msgbaseDao.appendMessage(msg.getId(), info));
   }
 
   @Transactional(rollbackFor = Exception.class, propagation = Propagation.MANDATORY)

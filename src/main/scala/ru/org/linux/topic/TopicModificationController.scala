@@ -23,20 +23,18 @@ import org.springframework.web.servlet.view.RedirectView
 import ru.org.linux.auth.AccessViolationException
 import ru.org.linux.auth.AuthUtil.ModeratorOnly
 import ru.org.linux.group.GroupService
-import ru.org.linux.markup.MessageTextService
-import ru.org.linux.msgbase.MsgbaseDao
 import ru.org.linux.search.SearchQueueSender
 import ru.org.linux.section.{Section, SectionService}
 import ru.org.linux.user.{UserErrorException, UserService}
 
 import scala.jdk.CollectionConverters.*
-import scala.jdk.OptionConverters.RichOption
+
 
 @Controller
 class TopicModificationController(prepareService: TopicPrepareService, messageDao: TopicDao,
                                   sectionService: SectionService, groupService: GroupService,
                                   userService: UserService, searchQueueSender: SearchQueueSender,
-                                  msgbaseDao: MsgbaseDao, textService: MessageTextService) extends StrictLogging {
+                                  topicService: TopicService) extends StrictLogging {
 
   @RequestMapping(value = Array("/setpostscore.jsp"), method = Array(RequestMethod.GET))
   def showForm(@RequestParam msgid: Int): ModelAndView = ModeratorOnly { _ =>
@@ -106,19 +104,7 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
     val newGrp = groupService.getGroup(newgr)
 
     if (msg.groupId != newGrp.id) {
-      val moveInfo = if (!newGrp.linksAllowed) {
-        val moveFrom = msg.groupUrl
-        val linktext = msg.linktext
-        val url = msg.url
-
-        val markup = msgbaseDao.getMessageText(msg.id).markup
-
-        Some(textService.moveInfo(markup, url, linktext, currentUser.user, moveFrom))
-      } else {
-        None
-      }
-
-      messageDao.moveTopic(msg, newGrp, moveInfo.toJava)
+      topicService.moveTopic(msg, newGrp, currentUser.user)
       logger.info(s"topic ${msg.id} moved by ${currentUser.user.nick} from news/forum ${msg.groupUrl} to forum ${newGrp.title}")
     }
 

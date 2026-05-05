@@ -339,4 +339,14 @@ class TopicService(topicDao: TopicDao, msgbaseDao: MsgbaseDao, sectionService: S
   }
 
   def getUncommitedCount(section: Section): Int = topicDao.getUncommitedCount(section.id)
+
+  def moveTopic(msg: Topic, newGrp: Group, moveBy: User): Unit = transactional() { _ =>
+    topicDao.moveTopic(msg, newGrp)
+
+    if !newGrp.linksAllowed then
+      val markup = msgbaseDao.getMessageText(msg.id).markup
+      val moveInfo = textService.moveInfo(markup, msg.url, msg.linktext, moveBy, msg.groupUrl)
+      msgbaseDao.appendMessage(msg.id, moveInfo)
+    end if
+  }
 }
