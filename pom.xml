@@ -722,7 +722,7 @@
               </includes>
               <skipMerge>true</skipMerge>
               <logLevel>all</logLevel>
-              <closureLanguageOut>ECMASCRIPT_2016</closureLanguageOut>
+              <closureLanguageOut>ECMASCRIPT_2021</closureLanguageOut>
               <outputFilename>#{path}/#{basename}.#{extension}</outputFilename>
             </configuration>
             <goals>
