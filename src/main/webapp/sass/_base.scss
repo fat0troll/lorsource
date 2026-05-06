@@ -924,3 +924,20 @@ figure.medium-image {
 #theme-indicator {
   display: none;
 }
+
+.swiffy-slider {
+  --swiffy-slider-nav-light: var(--table-link-color);
+}
+
+.news .swiffy-slider {
+  --swiffy-slider-nav-light: var(--article-background);
+  --swiffy-slider-nav-dark: var(--table-link-color);
+}
+
+.slider-indicators>* {
+  background-color: var(--table-link-color);
+}
+
+.news .slider-nav::before {
+  padding: 0;
+}
