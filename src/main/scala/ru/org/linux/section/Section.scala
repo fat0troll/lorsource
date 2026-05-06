@@ -20,23 +20,23 @@ import ru.org.linux.topic.TopicPermissionService
 import java.sql.ResultSet
 import scala.beans.{BeanProperty, BooleanBeanProperty}
 
-class Section(
+case class Section(
     @BeanProperty
-    var name: String,
+    name: String,
     @BooleanBeanProperty
-    var imagepost: Boolean,
+    imagepost: Boolean,
     @BooleanBeanProperty
-    var moderate: Boolean,
+    moderate: Boolean,
     @BeanProperty
-    var id: Int,
+    id: Int,
     @BooleanBeanProperty
-    var votepoll: Boolean,
+    votepoll: Boolean,
     @BeanProperty
-    var scrollMode: SectionScrollModeEnum,
+    scrollMode: SectionScrollModeEnum,
     @BeanProperty
-    var topicsRestriction: Int,
+    topicsRestriction: Int,
     @BooleanBeanProperty
-    var imageAllowed: Boolean):
+    imageAllowed: Boolean):
   import Section.*
 
   def getTitle: String = name
@@ -62,16 +62,20 @@ class Section(
       Section.getSectionLink(id)
 
   def getSectionLink: String = Section.getSectionLink(id)
-  
+
   def uncommitedName: String =
     id match
-      case Section.Gallery => "Неподтверждённые галереи"
-      case _ => "Неподтверждённые " + name.toLowerCase
+      case Section.Gallery =>
+        "Неподтверждённые галереи"
+      case _ =>
+        "Неподтверждённые " + name.toLowerCase
 
   def uncommitedNameShort: String =
     id match
-      case Section.Gallery => "неподтв. галереи"
-      case _ => "неподтв. " + name.toLowerCase
+      case Section.Gallery =>
+        "неподтв. галереи"
+      case _ =>
+        "неподтв. " + name.toLowerCase
 
 object Section:
   final val Forum = 2
