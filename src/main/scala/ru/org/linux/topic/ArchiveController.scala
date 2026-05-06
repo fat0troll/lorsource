@@ -41,7 +41,7 @@ class ArchiveController(sectionService: SectionService, groupService: GroupServi
 
     mv.getModel.put("group", group.orNull)
 
-    val items = archiveDao.getArchiveStats(section, group.orNull)
+    val items = archiveDao.getArchiveStats(section, group)
 
     mv.getModel.put("items", items)
 
