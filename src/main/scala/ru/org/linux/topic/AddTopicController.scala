@@ -20,6 +20,7 @@ import jakarta.servlet.http.HttpServletRequest
 import org.apache.commons.io.IOUtils
 import org.apache.pekko.actor.typed.ActorRef
 import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Controller
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.WebDataBinder
@@ -36,7 +37,7 @@ import ru.org.linux.msgbase.MessageText
 import ru.org.linux.poll.{Poll, PollVariant}
 import ru.org.linux.realtime.RealtimeEventHub
 import ru.org.linux.search.SearchQueueSender
-import ru.org.linux.section.{Section, SectionService}
+import ru.org.linux.section.{Section, SectionNotFoundException, SectionService}
 import ru.org.linux.tag.TagService.tagRef
 import ru.org.linux.tag.{TagName, TagService}
 import ru.org.linux.user.{User, UserPermissionService, UserPropertyEditor, UserService}
@@ -354,6 +355,10 @@ class AddTopicController(searchQueueSender: SearchQueueSender, captcha: CaptchaS
 
     binder.registerCustomEditor(classOf[User], new UserPropertyEditor(userService))
   }
+
+  @ExceptionHandler(Array(classOf[SectionNotFoundException]))
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  def handleNotFoundException: ModelAndView = new ModelAndView("errors/code404")
 
   @InitBinder(Array("form"))
   def requestValidator(binder: WebDataBinder): Unit = {
