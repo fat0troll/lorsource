@@ -107,7 +107,7 @@
         <div class="reply">
           <ul>
             <c:if test="${commentsAllowed}">
-              <li><a href="add_comment.jsp?topic=${topic.id}&replyto=${comment.id}" data-author-readonly="${comment.authorReadonly}">Ответить<span class="hideon-phone"> на это сообщение</span></a></li>
+              <li><a href="add_comment.jsp?topic=${topic.id}&replyto=${comment.id}" data-author-readonly="${comment.authorReadonly}">Ответить</a></li>
             </c:if>
 
             <c:if test="${comment.reactions.emptyMap and comment.reactions.allowInteract}">
