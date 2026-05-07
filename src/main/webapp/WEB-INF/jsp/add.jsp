@@ -23,7 +23,6 @@
 <%--@elvariable id="template" type="ru.org.linux.site.Template"--%>
 <%--@elvariable id="addportal" type="java.lang.String"--%>
 <%--@elvariable id="form" type="ru.org.linux.topic.AddTopicRequest"--%>
-<%--@elvariable id="postscoreInfo" type="java.lang.String"--%>
 <%--@elvariable id="imagepost" type="java.lang.Boolean"--%>
 <%--@elvariable id="topicMenu" type="ru.org.linux.topic.TopicMenu"--%>
 <jsp:include page="/WEB-INF/jsp/head.jsp"/>
@@ -70,14 +69,6 @@
   ${addportal}
 </c:if>
 
-<%--<% if (tmpl.getProf().getBoolean("showinfo") && !Template.isSessionAuthorized(session)) { %>--%>
-<%--<font size=2>Чтобы просто поместить сообщение, используйте login `anonymous',--%>
-<%--без пароля. Если вы собираетесь активно участвовать в форуме,--%>
-<%--помещать новости на главную страницу,--%>
-<%--<a href="register.jsp">зарегистрируйтесь</a></font>.--%>
-<%--<p>--%>
-<%--<% } %>--%>
-
 <c:if test="${imagepost}">
 <p>
   Технические требования к изображению:
@@ -97,10 +88,6 @@
   <form:errors path="*" element="div" cssClass="error"/>
 
   <form:hidden path="noinfo"/>
-
-  <p>
-    ${postscoreInfo}
-  </p>
 
   <c:if test="${not template.sessionAuthorized}">
     <div class="control-group">
@@ -168,7 +155,7 @@
 
 <div class="control-group">
   <label for="form_msg">Сообщение</label>
-    <form:textarea path="msg" rows="20" id="form_msg"/>
+    <form:textarea path="msg" id="form_msg"/>
 
     <div class="help-block">
       <c:if test="${template.formatMode == 'lorcode'}">

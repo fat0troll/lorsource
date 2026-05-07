@@ -80,10 +80,11 @@ object AddTopicController {
 
   def getAddUrl(group: Group): String = getAddUrl(group, null)
 
-  def getAddUrl(group: Group, @Nullable tag: String): String = {
+  def getAddUrl(group: Group, @Nullable tag: String, noinfo: Boolean = false): String = {
     val builder = UriComponentsBuilder.fromPath("/add.jsp")
     builder.queryParam("group", group.id)
     if (tag != null) builder.queryParam("tags", tag)
+    if (noinfo) builder.queryParam("noinfo", 1)
     builder.build.toUriString
   }
 }
@@ -122,7 +123,7 @@ class AddTopicController(searchQueueSender: SearchQueueSender, captcha: CaptchaS
   }
 
   private def prepareModel(group: Option[Group], section: Section)
-                          (implicit currentUser: AnySession): Map[String, AnyRef] = {
+                          (using currentUser: AnySession): Map[String, AnyRef] = {
     val params = Map.newBuilder[String, AnyRef]
 
     val helpResource = servletContext.getResource("/help/new-topic-" + Section.getUrlName(section.id) + ".md")
@@ -137,7 +138,6 @@ class AddTopicController(searchQueueSender: SearchQueueSender, captcha: CaptchaS
 
     group.foreach { group =>
       params.addOne("group" -> group)
-      params.addOne("postscoreInfo" -> permissionService.getPostScoreInfo(group))
       params.addOne("showAllowAnonymous" -> Boolean.box(permissionService.enableAllowAnonymousCheckbox(group)))
       params.addOne("imagepost" -> Boolean.box(permissionService.isImagePostingAllowed(section)))
     }
@@ -276,7 +276,7 @@ class AddTopicController(searchQueueSender: SearchQueueSender, captcha: CaptchaS
 
         params.put("groups", Seq(AddTopicController.GroupChoice(
           group,
-          AddTopicController.getAddUrl(group, tag),
+          AddTopicController.getAddUrl(group, tag, noinfo = true),
           false,
           permissionService.getPostScoreInfo(group)
         )).asJava)
@@ -292,7 +292,7 @@ class AddTopicController(searchQueueSender: SearchQueueSender, captcha: CaptchaS
         val postable = permissionService.isTopicPostingAllowed(group)
         AddTopicController.GroupChoice(
           group,
-          AddTopicController.getAddUrl(group, tag),
+          AddTopicController.getAddUrl(group, tag, noinfo = true),
           postable,
           if postable then "" else permissionService.getPostScoreInfo(group)
         )
