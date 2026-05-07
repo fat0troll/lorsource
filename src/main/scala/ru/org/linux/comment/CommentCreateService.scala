@@ -209,7 +209,7 @@ class CommentCreateService(commentDao: CommentDao, topicDao: TopicDao, userServi
 
     val notifyUsers = Set.newBuilder[Int]
 
-    val commentId = commentDao.saveNewMessage(comment, userAgent.toJava)
+    val commentId = commentDao.saveNewMessage(comment, userAgent)
 
     msgbaseDao.saveNewMessage(commentBody, commentId)
 
