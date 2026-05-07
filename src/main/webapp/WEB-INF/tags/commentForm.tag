@@ -27,6 +27,7 @@
 <%@ attribute name="cancel" required="false" type="java.lang.Boolean" %>
 <%@ attribute name="ipBlockInfo" required="false" type="ru.org.linux.auth.IPBlockInfo" %>
 <%@ attribute name="postscoreInfo" required="true" type="java.lang.String" %>
+<%@ attribute name="lazyCaptcha" required="false" type="java.lang.Boolean" %>
 
 <form:form modelAttribute="add" method="POST" action="${form_action_url}" id="commentForm">
   <lor:csrf/>
@@ -101,7 +102,7 @@
   </div>
 
   <div class="help-block">
-    <lor:captcha ipBlockInfo="${ipBlockInfo}" />
+    <lor:captcha ipBlockInfo="${ipBlockInfo}" lazy="${lazyCaptcha}" />
   </div>
 
   <div class="form-actions">

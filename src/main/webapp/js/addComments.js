@@ -32,6 +32,36 @@ $script.ready(['jquery', 'hljs'], function() {
 
     const csrf = (getCookie("CSRF_TOKEN") || '').replace(/(^")|("$)/g, "");
 
+    let captchaLoaded = false;
+    let captchaRendered = false;
+
+    function loadCaptcha() {
+      const lazyCaptcha = commentFormContainer.find('[data-lazy-captcha]')[0];
+      if (!lazyCaptcha || captchaLoaded) {
+        return;
+      }
+
+      captchaLoaded = true;
+      const sitekey = lazyCaptcha.getAttribute('data-sitekey');
+      const script = document.createElement('script');
+      script.src = 'https://js.hcaptcha.com/1/api.js?render=explicit';
+      script.async = true;
+      script.onload = function() {
+        if (typeof hcaptcha !== 'undefined' && !captchaRendered) {
+          hcaptcha.render(lazyCaptcha, {sitekey: sitekey});
+          captchaRendered = true;
+          lazyCaptcha.removeAttribute('data-lazy-captcha');
+        }
+      };
+      document.head.appendChild(script);
+    }
+
+    function resetCaptcha() {
+      if (captchaRendered && typeof hcaptcha !== 'undefined') {
+        try { hcaptcha.reset(); } catch(e) { /* ignore */ }
+      }
+    }
+
     function updateCsrf() {
       if (csrf) {
         $("input[name='csrf']", commentForm).val(csrf);
@@ -56,6 +86,7 @@ $script.ready(['jquery', 'hljs'], function() {
         const reply = $('div.reply', $('div.msg_body', $(selector)));
         reply.after(commentFormContainer);
         replyTo.val(replyToValue);
+        loadCaptcha();
         commentFormContainer.slideDown('slow', function() {
           const formTop = commentFormContainer.offset().top;
           const formHeight = commentFormContainer.outerHeight();
@@ -177,6 +208,7 @@ $script.ready(['jquery', 'hljs'], function() {
           errors.append($("<br>"));
         });
         commentPreview.prepend(errors);
+        resetCaptcha();
       }
 
       scrollToPreview();
@@ -187,6 +219,7 @@ $script.ready(['jquery', 'hljs'], function() {
         $('<div class="error">')
           .text("Не удалось выполнить запрос, попробуйте повторить еще раз. " + errorThrown)
       );
+      resetCaptcha();
       scrollToPreview();
     }
 

@@ -8,8 +8,9 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <%@ attribute name="ipBlockInfo" required="false" type="ru.org.linux.auth.IPBlockInfo" %>
+<%@ attribute name="lazy" required="false" type="java.lang.Boolean" %>
 <%--
-  ~ Copyright 1998-2018 Linux.org.ru
+  ~ Copyright 1998-2026 Linux.org.ru
   ~    Licensed under the Apache License, Version 2.0 (the "License");
   ~    you may not use this file except in compliance with the License.
   ~    You may obtain a copy of the License at
@@ -30,9 +31,16 @@
     WebApplicationContext ctx=RequestContextUtils.findWebApplicationContext(request);
 
     String key = ((SiteConfig) ctx.getBean("siteConfig")).getCaptchaPublicKey();
+
+    if (lazy != null && lazy) {
+%>
+<div class="h-captcha" data-sitekey="<%= key %>" data-lazy-captcha></div>
+<%
+    } else {
 %>
 <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
 <div class="h-captcha" data-sitekey="<%= key %>"></div>
 <%
+    }
   }
 %>

@@ -73,7 +73,7 @@
 
 <script type="text/javascript">
   $script.ready('lorjs', function() { initNextPrevKeys(); });
-  <c:if test="${not message.expired and template.sessionAuthorized}">
+  <c:if test="${not message.expired and messageMenu.commentsAllowed}">
     $script('/js/addComments.js?MAVEN_BUILD_TIMESTAMP');
   </c:if>
 
@@ -375,7 +375,7 @@
   </section>
 </c:if>
 
-<c:if test="${not message.expired and template.sessionAuthorized}">
+<c:if test="${not message.expired and messageMenu.commentsAllowed}">
   <div style="display: none">
     <c:url var="form_action_url" value="/add_comment.jsp" />
     <lor:commentForm
@@ -384,7 +384,8 @@
             cancel="true"
             ipBlockInfo="${ipBlockInfo}"
             form_action_url="${form_action_url}"
-            postscoreInfo="${preparedMessage.postscoreInfo}"/>
+            postscoreInfo="${preparedMessage.postscoreInfo}"
+            lazyCaptcha="true"/>
   </div>
 </c:if>
 
