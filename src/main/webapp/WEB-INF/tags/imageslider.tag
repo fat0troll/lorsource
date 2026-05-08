@@ -20,8 +20,11 @@
 <%@ attribute name="classes" required="false" type="java.lang.String" %>
 <%@ attribute name="images" required="true" type="java.util.List<ru.org.linux.topic.PreparedImage>" %>
 <%@ attribute name="heightLimit" required="false" type="java.lang.String" %>
+<%@ attribute name="sizes" required="false" type="java.lang.String" %>
+
 <c:set var="main" value="${images[0]}"/>
 <c:set var="heightLimitValue" value="${(empty heightLimit) ? '90vh' : heightLimit}" />
+<c:set var="sizesValue" value="${(empty sizes) ? '100vw' : sizes}" />
 <div class="slider-parent" style="width: min(var(--image-width), calc(${heightLimitValue} * ${main.mediumInfo.width} / ${main.mediumInfo.height}))">
   <div class="swiffy-slider slider-indicators-round ${classes} slider-item-ratio slider-item-ratio-contain"
        style="--swiffy-slider-item-ratio: ${main.fullInfo.width}/${main.fullInfo.height}">
@@ -32,7 +35,7 @@
             src="${image.mediumName}"
             alt="<l:title>${title}</l:title>"
             srcset="${image.srcset}"
-            sizes="${sizes}"
+            sizes="${sizesValue}"
             style="max-width: 100%; height: auto; max-height: 100%; top: 50%; transform: translateY(-50%)"
             ${image.loadingCode}
             ${image.mediumInfo.code}>
