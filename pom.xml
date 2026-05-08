@@ -553,7 +553,7 @@
         <artifactId>maven-war-plugin</artifactId>
         <version>3.1.0</version>
         <configuration>
-          <warSourceExcludes>**/*.css,**/js/*.js</warSourceExcludes>
+          <warSourceExcludes>**/*.css,**/js/*.js,**/js/lor/</warSourceExcludes>
         </configuration>
         <executions>
           <execution>
@@ -714,7 +714,6 @@
             <configuration>
               <encoding>UTF-8</encoding>
               <includes>
-                <include>lor.js</include>
                 <include>addComments.js</include>
                 <include>lor_view_diff_history.js</include>
                 <include>realtime.js</include>
@@ -724,6 +723,34 @@
               <logLevel>all</logLevel>
               <closureLanguageOut>ECMASCRIPT_2021</closureLanguageOut>
               <outputFilename>#{path}/#{basename}.#{extension}</outputFilename>
+            </configuration>
+            <goals>
+              <goal>minify</goal>
+            </goals>
+            <phase>generate-resources</phase>
+          </execution>
+          <execution>
+            <id>minify-lor</id>
+            <configuration>
+              <encoding>UTF-8</encoding>
+              <sourceDir>js/lor</sourceDir>
+              <targetDir>js</targetDir>
+              <includes>
+                <include>timezone.js</include>
+                <include>navigation.js</include>
+                <include>memories.js</include>
+                <include>reactions.js</include>
+                <include>forms.js</include>
+                <include>spoilers.js</include>
+                <include>ads.js</include>
+                <include>notifications.js</include>
+                <include>theme.js</include>
+                <include>images.js</include>
+              </includes>
+              <skipMerge>false</skipMerge>
+              <logLevel>all</logLevel>
+              <closureLanguageOut>ECMASCRIPT_2021</closureLanguageOut>
+              <outputFilename>lor.js</outputFilename>
             </configuration>
             <goals>
               <goal>minify</goal>
