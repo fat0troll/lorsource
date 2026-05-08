@@ -41,10 +41,10 @@
 <nav>
   <c:if test="${section.premoderated}">
     <c:if test="${offsetNavigation}">
-      <a class="btn btn-selected" href="${section.sectionLink}">Новые темы</a>
+      <a class="btn btn-selected" href="${section.sectionLink}">Лента</a>
     </c:if>
     <c:if test="${not offsetNavigation}">
-      <a class="btn btn-default" href="${section.sectionLink}">Новые темы</a>
+      <a class="btn btn-default" href="${section.sectionLink}">Лента</a>
     </c:if>
 
     <c:if test="${uncommitedCount > 0}">
