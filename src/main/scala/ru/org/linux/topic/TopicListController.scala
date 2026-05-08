@@ -127,7 +127,7 @@ class TopicListController(sectionService: SectionService, topicListService: Topi
 
     if (section.id != Section.Forum) {
       modelAndView.addObject("groupList",
-        SectionController.groupsSorted(groupService.getGroups(section).asScala).asJava)
+        SectionController.groupsSorted(groupService.getGroups(section)).asJava)
     } else {
       modelAndView.addObject("filters", ForumFilters.asJava)
       modelAndView.addObject("filter", topicListForm.filter.getOrElse(""))

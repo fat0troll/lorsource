@@ -54,7 +54,7 @@ class TagService(tagDao: TagDao, searchClient: OpenSearchAsyncClient, actorSyste
 
   private val sectionForum: Section = sectionService.getSection(Section.Forum)
   private val NonTechNames: Seq[String] =
-    groupService.getGroups(sectionForum).asScala.filter(g => SectionController.NonTech.contains(g.id)).map(_.urlName).toSeq
+    groupService.getGroups(sectionForum).filter(g => SectionController.NonTech.contains(g.id)).map(_.urlName).toSeq
 
   /**
    * Получение идентификационного номера тега по названию.

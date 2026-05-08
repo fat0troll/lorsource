@@ -33,7 +33,7 @@ class SectionController(sectionService: SectionService, groupService: GroupServi
 
     val allGroups = groupService.getGroups(section)
 
-    val (other, tech) = allGroups.asScala.partition(g => NonTech.contains(g.id))
+    val (other, tech) = allGroups.partition(g => NonTech.contains(g.id))
 
     new ModelAndView("forum", Map[String, Any](
       "section" -> section,

@@ -22,7 +22,9 @@
     <import resource="classpath:database.xml"/>
     <import resource="classpath:common.xml"/>
 
-    <bean class="ru.org.linux.group.GroupDao" id="groupDao"/>
+    <bean class="ru.org.linux.group.GroupDao" id="groupDao">
+        <constructor-arg ref="datasource"/>
+    </bean>
     <bean class="ru.org.linux.group.GroupService" id="groupService"/>
 
 </beans>

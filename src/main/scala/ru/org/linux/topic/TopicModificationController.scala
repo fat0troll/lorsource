@@ -119,7 +119,7 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
     val sections = Seq(sectionService.getSection(Section.Forum),
       sectionService.getSection(Section.Articles))
 
-    val groups = sections.flatMap(g => groupService.getGroups(g).asScala)
+    val groups = sections.flatMap(g => groupService.getGroups(g))
 
     new ModelAndView("mtn", Map (
       "message" -> topic,
@@ -140,7 +140,7 @@ class TopicModificationController(prepareService: TopicPrepareService, messageDa
       Seq(currentSection)
     }
 
-    val groups = sections.flatMap(g => groupService.getGroups(g).asScala)
+    val groups = sections.flatMap(g => groupService.getGroups(g))
 
     new ModelAndView("mtn", Map(
       "message" -> topic,

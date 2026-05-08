@@ -269,7 +269,7 @@ class AddTopicController(searchQueueSender: SearchQueueSender, captcha: CaptchaS
     val groups = groupService.getGroups(section)
 
     if groups.size == 1 then
-      val group = groups.get(0)
+      val group = groups(0)
       if permissionService.isTopicPostingAllowed(group) then
         new ModelAndView(new RedirectView(AddTopicController.getAddUrl(group, tag)))
       else
@@ -289,7 +289,7 @@ class AddTopicController(searchQueueSender: SearchQueueSender, captcha: CaptchaS
     else
       val params = prepareModel(None, section).to(mutable.HashMap)
 
-      val groupChoices = groups.asScala.toSeq.map { group =>
+      val groupChoices = groups.map { group =>
         val postable = permissionService.isTopicPostingAllowed(group)
         AddTopicController.GroupChoice(
           group,
@@ -312,15 +312,15 @@ class AddTopicController(searchQueueSender: SearchQueueSender, captcha: CaptchaS
     val sectionList = sectionService.sections.filter(_.moderate).map { section =>
       val groups = groupService.getGroups(section)
       val postable = if groups.size == 1 then
-        permissionService.isTopicPostingAllowed(groups.get(0))
+        permissionService.isTopicPostingAllowed(groups(0))
       else
         permissionService.isTopicPostingAllowed(section)
       val postScoreInfo = if groups.size == 1 then
-        permissionService.getPostScoreInfo(groups.get(0))
+        permissionService.getPostScoreInfo(groups(0))
       else
         permissionService.getPostScoreInfo(section)
       val url = if groups.size == 1 then
-        AddTopicController.getAddUrl(groups.get(0), tag)
+        AddTopicController.getAddUrl(groups(0), tag)
       else
         val builder = UriComponentsBuilder.fromPath("/add-section.jsp")
         builder.queryParam("section", section.id)

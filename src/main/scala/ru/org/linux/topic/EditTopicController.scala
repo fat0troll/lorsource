@@ -104,7 +104,7 @@ class EditTopicController(searchQueueSender: SearchQueueSender, topicService: To
     val group = preparedTopic.group
 
     params.put("group", group)
-    params.put("groups", groupService.getGroups(preparedTopic.section))
+    params.put("groups", groupService.getGroups(preparedTopic.section).asJava)
     params.put("newMsg", message)
 
     val topicMenu = prepareService.getTopicMenu(preparedTopic, loadUserpics = true)

@@ -148,7 +148,7 @@ class GroupController(groupService: GroupService, archiveDao: ArchiveDao, sectio
     params.put("showDeleted", Boolean.box(showDeleted))
     params.put("showDeletedButton", Boolean.box(!lastmod && yearMonth.isEmpty && groupPermissionService.canViewAllDeletedTopics))
 
-    params.put("groupList", SectionController.groupsSorted(groupService.getGroups(section).asScala).asJava)
+    params.put("groupList", SectionController.groupsSorted(groupService.getGroups(section)).asJava)
 
     params.put("firstPage", Boolean.box(firstPage))
     params.put("offset", Integer.valueOf(offset))

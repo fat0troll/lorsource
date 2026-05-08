@@ -21,7 +21,6 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.junit4.SpringRunner
 import ru.org.linux.section.{Section, SectionScrollModeEnum}
 
-import scala.jdk.CollectionConverters._
 import org.junit.Assert.assertEquals
 
 @RunWith(classOf[SpringRunner])

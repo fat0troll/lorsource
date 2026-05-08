@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service
 import ru.org.linux.section.Section
 
 import java.util.concurrent.TimeUnit
-import scala.jdk.OptionConverters.*
 
 @Service
 class GroupService(groupDao: GroupDao):
@@ -51,7 +50,7 @@ class GroupService(groupDao: GroupDao):
     * @return
     *   список групп
     */
-  def getGroups(section: Section): java.util.List[Group] = groupDao.getGroups(section)
+  def getGroups(section: Section): Seq[Group] = groupDao.getGroups(section)
 
   /** Получить объект группы в указанной секции по имени группы.
     *
@@ -81,7 +80,7 @@ class GroupService(groupDao: GroupDao):
     *   объект группы (optional)
     */
   def getGroupOpt(section: Section, name: String, allowNumber: Boolean): Option[Group] =
-    val group = groupDao.getGroupOpt(section, name, allowNumber).toScala
+    val group = groupDao.getGroupOpt(section, name, allowNumber)
     group.foreach(g => groupCache.put(g.id, g))
     group
 

@@ -79,10 +79,7 @@ class GroupServiceIntegrationTest:
 @Configuration @ImportResource(Array("classpath:database.xml", "classpath:common.xml"))
 class GroupServiceIntegrationTestConfiguration:
   @Bean
-  def groupDao(dataSource: DataSource): GroupDao =
-    val dao = new GroupDao()
-    dao.setDateSource(dataSource)
-    dao
+  def groupDao(dataSource: DataSource): GroupDao = new GroupDao(dataSource)
 
   @Bean
   def groupService(groupDao: GroupDao): GroupService = new GroupService(groupDao)

@@ -78,7 +78,7 @@ object TopicDaoIntegrationTest {
 @ImportResource (Array ("classpath:database.xml", "classpath:common.xml") )
 class TopicDaoIntegrationTestConfiguration {
   @Bean
-  def groupDao = new GroupDao()
+  def groupDao(ds: DataSource) = new GroupDao(ds)
 
   @Bean
   def groupService(groupDao: GroupDao) = new GroupService(groupDao)
