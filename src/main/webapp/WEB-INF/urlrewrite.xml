@@ -102,18 +102,24 @@
   </rule>
 
   <rule>
+    <from>^/font/opensans/.*$</from>
+    <set type="response-header" name="Cache-Control">max-age=315360000</set>
+  </rule>
+
+  <rule>
     <from>jquery.*\.(js)$</from>
     <set type="response-header" name="Cache-Control">max-age=315360000</set>
   </rule>
 
   <rule>
-    <from>\.(css|js|woff|svg|ttf)$</from>
+    <from>\.(css|js|woff|svg|ttf|woff2)$</from>
     <condition type="path-translated" operator="notequal">.*jquery.*</condition>
+    <condition type="request-uri" operator="notequal">/font/opensans/.*</condition>
     <set type="response-header" name="Cache-Control">max-age=3600</set>
   </rule>
 
   <rule>
-    <from>\.(css|js|woff|svg|ttf)\?.</from>
+    <from>\.(css|js|woff|svg|ttf|woff2)\?.</from>
     <set type="response-header" name="Cache-Control">max-age=315360000</set>
   </rule>
 
