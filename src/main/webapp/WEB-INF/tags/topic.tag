@@ -117,12 +117,13 @@
       <c:if test="${imageSlider}">
         <lor:imageslider title="${preparedMessage.message.title}"
                          classes="slider-indicators-outside slider-indicators-sm"
+                         sizes="${sizes}"
                          images="${preparedMessage.allImages}"/>
       </c:if>
 
       <c:if test="${not imageSlider}">
         <c:forEach var="image" items="${preparedMessage.allImages}">
-          <lor:image title="${preparedMessage.message.title}" image="${image}" enableSchema="true"
+          <lor:image title="${preparedMessage.message.title}" image="${image}" enableSchema="true" sizes="${sizes}"
                      preparedMessage="${preparedMessage}" showImage="true" enableEdit="${messageMenu.topicEditable && showImageDelete}"/>
         </c:forEach>
       </c:if>

@@ -101,6 +101,7 @@
 <c:if test="${fn:length(preparedMessage.allImages) > 1}">
   <lor:imageslider title="${preparedMessage.message.title}"
                    classes="slider-nav-autohide slider-nav-round slider-indicators-sm slider-indicators-outside"
+                   sizes="(min-width: 47em) 40vw, 100vw"
                    images="${preparedMessage.allImages}"
                    heightLimit="70vh"/>
 </c:if>
