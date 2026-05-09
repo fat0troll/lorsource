@@ -92,7 +92,7 @@ class UserTagService(userTagDao: UserTagDao, tagService: TagService) {
     * @return список тегов пользователя
     */
   def favoritesGet(user: User): java.util.List[String] = {
-    userTagDao.getTags(user.id, true)
+    userTagDao.getTags(user.id, true).asJava
   }
 
   /**
@@ -102,7 +102,7 @@ class UserTagService(userTagDao: UserTagDao, tagService: TagService) {
     * @return список игнорированных тегов пользователя
     */
   def ignoresGet(user: User): java.util.List[String] = {
-    userTagDao.getTags(user.id, false)
+    userTagDao.getTags(user.id, false).asJava
   }
 
   /**
@@ -115,7 +115,7 @@ class UserTagService(userTagDao: UserTagDao, tagService: TagService) {
   def getUserIdListByTags(userid: Int, tags: Seq[String]): Seq[Int] = {
     val tagIds = tags.flatMap(tagService.getTagIdOptWithSynonym).distinct
 
-    userTagDao.getUserIdListByTags(userid, tagIds.map(Integer.valueOf).asJava).asScala.view.map(_.toInt).toSeq
+    userTagDao.getUserIdListByTags(userid, tagIds)
   }
 
   def getUserIdListByTagsJava(userid: Int, tags: java.util.List[String]): java.util.List[Integer] = {
