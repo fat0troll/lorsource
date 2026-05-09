@@ -79,8 +79,9 @@ class SearchController(sectionService: SectionService, userService: UserService,
       params.put("searchTime", response.took)
       params.put("numFound", response.totalHits)
 
-      if (response.totalHits > query.getOffset + SearchService.SearchRows) {
-        params.put("nextLink", "/search.jsp?" + query.getQuery(query.getOffset + SearchService.SearchRows))
+      val nextOffset = query.getOffset + SearchService.SearchRows
+      if nextOffset < SearchService.MaxOffset && response.totalHits > nextOffset then {
+        params.put("nextLink", "/search.jsp?" + query.getQuery(nextOffset))
       }
 
       if (query.getOffset - SearchService.SearchRows >= 0) {

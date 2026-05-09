@@ -354,6 +354,7 @@ class SearchService(elastic: OpenSearchClient, userService: UserService, siteCon
 
 object SearchService {
   val SearchRows = 25
+  val MaxOffset = 10000 - SearchRows
   private val MessageFragment = 16384
   private val RecentBoost = 2
   private val SearchTimeout: FiniteDuration = 1.minute
