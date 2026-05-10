@@ -117,6 +117,7 @@ $script.ready(['jquery', 'hljs'], function() {
     commentForm.append($('<div id="commentPreview">').hide());
     const commentPreview = $('#commentPreview');
     const commentFormContainer = commentForm.parent();
+    const isInline = commentFormContainer.is(':hidden');
 
     const csrf = (getCookie("CSRF_TOKEN") || '').replace(/(^")|("$)/g, "");
 
@@ -156,98 +157,105 @@ $script.ready(['jquery', 'hljs'], function() {
       }
     };
 
-    const updateAuthorReadonlyNote = (authorReadonly) => {
-      $('#author-readonly-note').text(
-        authorReadonly
-          ? "Внимание! Вы отвечаете на комментарий, автора которого не может создавать новые комментарии в этом топике."
-          : ""
-      );
-    };
+    if (isInline) {
+      const updateAuthorReadonlyNote = (authorReadonly) => {
+        $('#author-readonly-note').text(
+          authorReadonly
+            ? "Внимание! Вы отвечаете на комментарий, автора которого не может создавать новые комментарии в этом топике."
+            : ""
+        );
+      };
 
-    const REPLY_TYPE = 1;
-    const TOPIC_TYPE = 0;
+      const REPLY_TYPE = 1;
+      const TOPIC_TYPE = 0;
 
-    const moveAndShowForm = (selector, replyToValue) => {
-      const replyTo = $("input[name='replyto']", commentFormContainer);
-      if (replyTo.val() !== String(replyToValue)) {
-        commentFormContainer.hide();
-      }
+      const moveAndShowForm = (selector, replyToValue) => {
+        const replyTo = $("input[name='replyto']", commentFormContainer);
+        if (replyTo.val() !== String(replyToValue)) {
+          commentFormContainer.hide();
+        }
 
-      if (commentFormContainer.is(':hidden')) {
-        const reply = $('div.reply', $('div.msg_body', $(selector)));
-        reply.after(commentFormContainer);
-        replyTo.val(replyToValue);
-        loadCaptcha();
-        commentFormContainer.slideDown('slow', () => {
-          const formTop = commentFormContainer.offset().top;
-          const formHeight = commentFormContainer.outerHeight();
-          const viewportHeight = window.innerHeight;
+        if (commentFormContainer.is(':hidden')) {
+          const reply = $('div.reply', $('div.msg_body', $(selector)));
+          reply.after(commentFormContainer);
+          replyTo.val(replyToValue);
+          loadCaptcha();
+          commentFormContainer.slideDown('slow', () => {
+            const formTop = commentFormContainer.offset().top;
+            const formHeight = commentFormContainer.outerHeight();
+            const viewportHeight = window.innerHeight;
 
-          const formBottom = formTop + formHeight;
-          const currentScrollTop = $(window).scrollTop();
-          const currentViewportBottom = currentScrollTop + viewportHeight;
+            const formBottom = formTop + formHeight;
+            const currentScrollTop = $(window).scrollTop();
+            const currentViewportBottom = currentScrollTop + viewportHeight;
 
-          let needsScroll;
+            let needsScroll;
 
-          if (formHeight <= viewportHeight) {
-            needsScroll = formTop < currentScrollTop || formBottom + 32 > currentViewportBottom;
-          } else {
-            const msgTop = $("#msg").offset().top;
-            needsScroll = msgTop < currentScrollTop || msgTop > currentViewportBottom;
-          }
-
-          if (needsScroll) {
-            let targetScrollTop;
             if (formHeight <= viewportHeight) {
-              targetScrollTop = formBottom - viewportHeight + 32;
+              needsScroll = formTop < currentScrollTop || formBottom + 32 > currentViewportBottom;
             } else {
-              targetScrollTop = formTop - 16;
+              const msgTop = $("#msg").offset().top;
+              needsScroll = msgTop < currentScrollTop || msgTop > currentViewportBottom;
             }
-            targetScrollTop = Math.max(0, targetScrollTop);
 
-            $('html,body').animate({scrollTop: targetScrollTop}, 300, () => {
+            if (needsScroll) {
+              let targetScrollTop;
+              if (formHeight <= viewportHeight) {
+                targetScrollTop = formBottom - viewportHeight + 32;
+              } else {
+                targetScrollTop = formTop - 16;
+              }
+              targetScrollTop = Math.max(0, targetScrollTop);
+
+              $('html,body').animate({scrollTop: targetScrollTop}, 300, () => {
+                $("#msg").focus();
+              });
+            } else {
               $("#msg").focus();
-            });
-          } else {
-            $("#msg").focus();
-          }
-        });
-      } else {
-        commentFormContainer.slideUp('slow');
-      }
-    };
+            }
+          });
+        } else {
+          commentFormContainer.slideUp('slow');
+        }
+      };
 
-    const toggleCommentForm = (type, id, authorReadonly) => {
-      updateCsrf();
-      updateAuthorReadonlyNote(authorReadonly);
+      const toggleCommentForm = (type, id, authorReadonly) => {
+        updateCsrf();
+        updateAuthorReadonlyNote(authorReadonly);
 
-      if (type === REPLY_TYPE) {
-        moveAndShowForm(`#comment-${id}`, id);
-      } else if (type === TOPIC_TYPE) {
-        const topicId = $("input[name='topic']", commentFormContainer).val();
-        moveAndShowForm(`#topic-${topicId}`, 0);
-      }
-    };
+        if (type === REPLY_TYPE) {
+          moveAndShowForm(`#comment-${id}`, id);
+        } else if (type === TOPIC_TYPE) {
+          const topicId = $("input[name='topic']", commentFormContainer).val();
+          moveAndShowForm(`#topic-${topicId}`, 0);
+        }
+      };
 
-    $('div.reply').each((_i, container) => {
-      $('a[href^="comment-message.jsp"]', container).on("click", (e) => {
-        e.preventDefault();
-        toggleCommentForm(TOPIC_TYPE, 0, false);
-      });
-
-      const lnk = $('a[href^="add_comment.jsp"]', container);
-      if (lnk.length > 0) {
-        const ids = lnk.attr('href').match(/\d+/g);
-        const commentId = ids[1];
-        lnk.on("click", (e) => {
+      $('div.reply').each((_i, container) => {
+        $('a[href^="comment-message.jsp"]', container).on("click", (e) => {
           e.preventDefault();
-          toggleCommentForm(REPLY_TYPE, commentId, lnk.attr('data-author-readonly') === "true");
+          toggleCommentForm(TOPIC_TYPE, 0, false);
         });
-      }
-    });
+
+        const lnk = $('a[href^="add_comment.jsp"]', container);
+        if (lnk.length > 0) {
+          const ids = lnk.attr('href').match(/\d+/g);
+          const commentId = ids[1];
+          lnk.on("click", (e) => {
+            e.preventDefault();
+            toggleCommentForm(REPLY_TYPE, commentId, lnk.attr('data-author-readonly') === "true");
+          });
+        }
+      });
+    } else {
+      loadCaptcha();
+      updateCsrf();
+    }
 
     const warnOnUnloadComment = (e) => {
-      if ($("#msg").val() !== '' && !commentFormContainer.is(":hidden")) {
+      const hasContent = $("#msg").val() !== '';
+      const isVisible = isInline ? !commentFormContainer.is(":hidden") : true;
+      if (hasContent && isVisible) {
         e.preventDefault();
         e.returnValue = UNSAVED_WARNING;
         return e.returnValue;
@@ -256,10 +264,16 @@ $script.ready(['jquery', 'hljs'], function() {
 
     window.addEventListener('beforeunload', warnOnUnloadComment);
 
-    commentForm.on("reset", () => {
-      commentFormContainer.slideUp('slow');
-      commentPreview.hide().empty();
-    });
+    if (isInline) {
+      commentForm.on("reset", () => {
+        commentFormContainer.slideUp('slow');
+        commentPreview.hide().empty();
+      });
+    } else {
+      commentForm.on("reset", () => {
+        commentPreview.hide().empty();
+      });
+    }
 
     const previewButton = commentForm.find("button[name=preview]");
     previewButton.attr("type", "button");

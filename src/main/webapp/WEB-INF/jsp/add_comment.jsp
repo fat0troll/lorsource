@@ -25,14 +25,7 @@
 
 <title>Добавить комментарий</title>
 <script type="text/javascript">
-  window._formWithSpinnerActive = true;
-  $script('/js/add-form.js?MAVEN_BUILD_TIMESTAMP', function() {
-    setupFormWithSpinner({
-      formSelector: '#commentForm',
-      textareaSelector: '#msg',
-      validateOptions: {}
-    });
-  });
+  $script('/js/add-form.js?MAVEN_BUILD_TIMESTAMP');
 </script>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 
