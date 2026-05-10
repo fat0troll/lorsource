@@ -29,6 +29,15 @@
 <%@ attribute name="postscoreInfo" required="true" type="java.lang.String" %>
 <%@ attribute name="lazyCaptcha" required="false" type="java.lang.Boolean" %>
 <%@ attribute name="autoFocus" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="formatModeFormId" required="false" type="java.lang.String" %>
+<%@ attribute name="formatModeTitle" required="false" type="java.lang.String" %>
+
+<c:if test="${empty formatModeFormId}">
+  <c:set var="formatModeFormId" value="${template.formatMode}" />
+</c:if>
+<c:if test="${empty formatModeTitle}">
+  <c:set var="formatModeTitle" value="${template.formatModeTitle}" />
+</c:if>
 
 <form:form modelAttribute="add" method="POST" action="${form_action_url}" id="commentForm">
   <lor:csrf/>
@@ -57,19 +66,27 @@
   <div class="warning-block" id="author-readonly-note">
   </div>
 
-  <div class="control-group">
-    <label for="msg">Сообщение</label>
-    <c:choose>
-      <c:when test="${autoFocus}">
-        <form:textarea id="msg" required="true" name="msg" path="msg" autofocus="autofocus"/>
-      </c:when>
-      <c:otherwise>
-        <form:textarea id="msg" required="true" name="msg" path="msg"/>
-      </c:otherwise>
-    </c:choose><br>
+  <div class="control-group" data-format-mode="${formatModeFormId}">
+    <div class="markup-tabs">
+      <ul class="markup-tabs__nav">
+        <li class="markup-tabs__tab active" data-tab="editor">${formatModeTitle}</li>
+      </ul>
+      <div class="markup-tabs__content">
+        <div class="markup-tabs__panel active" data-panel="editor">
+          <c:choose>
+            <c:when test="${autoFocus}">
+              <form:textarea id="msg" required="true" name="msg" path="msg" autofocus="autofocus"/>
+            </c:when>
+            <c:otherwise>
+              <form:textarea id="msg" required="true" name="msg" path="msg"/>
+            </c:otherwise>
+          </c:choose>
+        </div>
+      </div>
+    </div>
     <div class="help-block">Пустая строка (два раза Enter) начинает новый абзац.
                  Знак '&gt;' в начале абзаца выделяет абзац курсивом цитирования.<br>
-      <c:if test="${template.formatMode == 'lorcode'}">
+      <c:if test="${formatModeFormId == 'lorcode'}">
         <b>Внимание:</b> прочитайте описание разметки <a href="/help/lorcode.md" target="_blank" title="[br] - перевод строки
 
 [b]жирный текст[/b]
@@ -103,7 +120,7 @@
 можно с параметром, например:
 [url=http://www.example.com/]Сюда![/url]">LORCODE</a>.
       </c:if>
-      <c:if test="${template.formatMode == 'markdown'}">
+      <c:if test="${formatModeFormId == 'markdown'}">
         <b>Внимание:</b> прочитайте описание разметки <a target="_blank" href="/help/markdown.md">Markdown</a>.
       </c:if>
     </div>
@@ -115,7 +132,7 @@
 
   <div class="form-actions">
   <button type=submit class="btn btn-primary">Поместить</button>
-  <button type=submit name=preview class="btn btn-default">Предпросмотр</button>
+  <button type=submit name=preview class="btn btn-default preview-button-js-hidden">Предпросмотр</button>
   <c:if test="${cancel!=null && cancel}">
     <c:choose>
       <%-- Для режима редактирования --%>

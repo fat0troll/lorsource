@@ -44,6 +44,11 @@ public final class Template {
   }
 
   /* used in jsp */
+  public String getFormatModeTitle() {
+    return userProfile.formatMode().title();
+  }
+
+  /* used in jsp */
   public Profile getProf() {
     return userProfile;
   }

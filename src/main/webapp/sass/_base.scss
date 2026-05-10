@@ -88,6 +88,8 @@ textarea {
     font-family: "Droid Sans Mono", sans-serif;
     font-size: 1rem;
     max-width: 100%;
+    scrollbar-width: thin;
+    scrollbar-color: var(--table-border-color) var(--main-background);
 }
 
 /* common parts */

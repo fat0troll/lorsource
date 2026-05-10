@@ -76,6 +76,8 @@ class EditCommentController(commentService: CommentCreateService, msgbaseDao: Ms
       val ignoreList = ignoreListDao.get(currentUser.user.id)
 
       formParams.put("comment", commentPrepareService.prepareCommentOnly(comment, topic, ignoreList))
+      formParams.put("formatModeFormId", messageText.markup.formId)
+      formParams.put("formatModeTitle", messageText.markup.title)
 
       topicPermissionService.getEditDeadline(comment).foreach(value => formParams.put("deadline", Date.from(value)))
 
@@ -124,6 +126,8 @@ class EditCommentController(commentService: CommentCreateService, msgbaseDao: Ms
       originalMessageText.markup)
 
     if (commentRequest.isPreviewMode || errors.hasErrors || comment == null) {
+      formParams.put("formatModeFormId", originalMessageText.markup.formId)
+      formParams.put("formatModeTitle", originalMessageText.markup.title)
       val modelAndView = new ModelAndView("edit_comment", formParams)
       modelAndView.addObject("ipBlockInfo", ipBlockInfo)
       val deadline = topicPermissionService.getEditDeadline(commentRequest.getOriginal)

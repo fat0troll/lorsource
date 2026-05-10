@@ -15,6 +15,16 @@
 
 const UNSAVED_WARNING = "Вы что-то напечатали в форме. Все введенные данные будут потеряны при закрытии страницы.";
 
+function getCsrf() {
+  const cookies = Object.fromEntries(
+    document.cookie.split('; ').map(c => {
+      const [key, ...val] = c.split('=');
+      return [key, val.join('=')];
+    })
+  );
+  return (cookies["CSRF_TOKEN"] || '').replace(/(^")|("$)/g, "");
+}
+
 window.setupFormWithSpinner = function(options) {
   const startSpinner = ($form) => {
     const spinner = $("<i class='icon-spin spinner' style='margin-left: 0.5em'>");
@@ -26,6 +36,8 @@ window.setupFormWithSpinner = function(options) {
       const $form = $(options.formSelector);
       const $textarea = $(options.textareaSelector);
       let submitted = false;
+
+      initPreviewTabs($form[0], false);
 
       const warnOnUnload = (e) => {
         if ($textarea.val() !== '' && !submitted) {
@@ -66,6 +78,119 @@ window.setupFormWithSpinner = function(options) {
   });
 };
 
+function initPreviewTabs(formElement, hidePreviewButton) {
+  const formatGroup = formElement.querySelector('[data-format-mode]');
+  if (!formatGroup) return;
+
+  const formatMode = formatGroup.dataset.formatMode;
+  const textarea = formatGroup.querySelector('textarea');
+  if (!textarea) return;
+
+  const nav = formatGroup.querySelector('.markup-tabs__nav');
+  if (!nav) return;
+
+  const panelsContainer = formatGroup.querySelector('.markup-tabs__content');
+  if (!panelsContainer) return;
+
+  const editorTab = nav.querySelector('[data-tab="editor"]');
+  if (!editorTab) return;
+
+  const editorPanel = panelsContainer.querySelector('[data-panel="editor"]');
+  if (!editorPanel) return;
+
+  const previewTab = document.createElement('li');
+  previewTab.className = 'markup-tabs__tab';
+  previewTab.dataset.tab = 'preview';
+  previewTab.textContent = 'Предпросмотр';
+  nav.appendChild(previewTab);
+
+  const previewPanel = document.createElement('div');
+  previewPanel.className = 'markup-tabs__panel';
+  previewPanel.dataset.panel = 'preview';
+  const previewContent = document.createElement('div');
+  previewContent.className = 'markup-preview';
+  previewPanel.appendChild(previewContent);
+  panelsContainer.appendChild(previewPanel);
+
+  if (hidePreviewButton) {
+    const previewButton = formElement.querySelector('button[name=preview]');
+    if (previewButton) {
+      previewButton.classList.add('preview-button-js-hidden');
+    }
+  }
+
+  let textareaHeight = 0;
+
+  const switchTab = (tabName) => {
+    textareaHeight = textarea.offsetHeight;
+
+    nav.querySelectorAll('.markup-tabs__tab').forEach(t => t.classList.remove('active'));
+    panelsContainer.querySelectorAll('.markup-tabs__panel').forEach(p => p.classList.remove('active'));
+
+    if (tabName === 'editor') {
+      editorTab.classList.add('active');
+      editorPanel.classList.add('active');
+      previewContent.style.minHeight = '';
+      textarea.focus();
+    } else if (tabName === 'preview') {
+      previewTab.classList.add('active');
+      previewPanel.classList.add('active');
+      previewContent.style.minHeight = Math.max(textareaHeight, 50) + 'px';
+      loadPreview();
+    }
+  };
+
+  const loadPreview = () => {
+    const text = textarea.value;
+    if (!text.trim()) {
+      previewContent.textContent = '';
+      return;
+    }
+
+    previewContent.textContent = 'Загрузка...';
+
+    const formData = new URLSearchParams();
+    formData.append('text', text);
+    formData.append('markup', formatMode);
+    const csrf = getCsrf();
+    if (csrf) {
+      formData.append('csrf', csrf);
+    }
+
+    fetch('/markup/preview', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: formData.toString()
+    })
+    .then(response => response.json())
+    .then(data => {
+      previewContent.textContent = '';
+      if (data.error) {
+        previewContent.appendChild(Object.assign(document.createElement('div'), {className: 'error', textContent: data.error}));
+      } else {
+        previewContent.innerHTML = data.html;
+        previewContent.querySelectorAll('a').forEach(a => a.setAttribute('target', '_blank'));
+        $script.ready('hljs', function() {
+          previewContent.querySelectorAll('pre code').forEach(block => {
+            hljs.highlightBlock(block);
+          });
+        });
+      }
+    })
+    .catch((_error) => {
+      previewContent.textContent = '';
+      previewContent.appendChild(Object.assign(document.createElement('div'), {className: 'error', textContent: 'Не удалось выполнить запрос, попробуйте повторить еще раз.'}));
+    });
+  };
+
+  nav.addEventListener('click', (e) => {
+    const tab = e.target.closest('.markup-tabs__tab');
+    if (!tab || tab.classList.contains('active')) return;
+    e.preventDefault();
+    switchTab(tab.dataset.tab);
+  });
+}
+
 $script.ready('jquery', function() {
   'use strict';
 
@@ -78,16 +203,6 @@ $script.ready('jquery', function() {
     if (!commentForm.length) {
       return;
     }
-
-    const getCookie = (name) => {
-      const cookies = Object.fromEntries(
-        document.cookie.split('; ').map(c => {
-          const [key, ...val] = c.split('=');
-          return [key, val.join('=')];
-        })
-      );
-      return cookies[name] ?? null;
-    };
 
     const startSpinner = ($form) => {
       const spinner = $("<i class='icon-spin spinner' style='margin-left: 0.5em'>");
@@ -102,24 +217,10 @@ $script.ready('jquery', function() {
       $form.find("div[error]").remove();
     };
 
-    const scrollToPreview = ($preview) => {
-      $preview.show();
-
-      const scrollTop = $(window).scrollTop();
-      const viewportBottom = scrollTop + window.innerHeight;
-      const previewTop = $preview.offset().top;
-
-      if (previewTop < scrollTop || previewTop > viewportBottom) {
-        $('html,body').animate({scrollTop: previewTop - window.innerHeight / 3}, 500);
-      }
-    };
-
-    commentForm.append($('<div id="commentPreview">').hide());
-    const commentPreview = $('#commentPreview');
     const commentFormContainer = commentForm.parent();
     const isInline = commentFormContainer.is(':hidden');
 
-    const csrf = (getCookie("CSRF_TOKEN") || '').replace(/(^")|("$)/g, "");
+    const csrf = getCsrf();
 
     let captchaLoaded = false;
     let captchaRendered = false;
@@ -179,6 +280,12 @@ $script.ready('jquery', function() {
           const reply = $('div.reply', $('div.msg_body', $(selector)));
           reply.after(commentFormContainer);
           replyTo.val(replyToValue);
+
+          if (!commentForm[0].dataset.previewTabsInitialized) {
+            initPreviewTabs(commentForm[0], true);
+            commentForm[0].dataset.previewTabsInitialized = 'true';
+          }
+
           loadCaptcha();
           commentFormContainer.slideDown('slow', () => {
             const formTop = commentFormContainer.offset().top;
@@ -250,6 +357,10 @@ $script.ready('jquery', function() {
     } else {
       loadCaptcha();
       updateCsrf();
+      if (!commentForm[0].dataset.previewTabsInitialized) {
+        initPreviewTabs(commentForm[0], true);
+        commentForm[0].dataset.previewTabsInitialized = 'true';
+      }
     }
 
     const warnOnUnloadComment = (e) => {
@@ -267,65 +378,11 @@ $script.ready('jquery', function() {
     if (isInline) {
       commentForm.on("reset", () => {
         commentFormContainer.slideUp('slow');
-        commentPreview.hide().empty();
       });
     } else {
       commentForm.on("reset", () => {
-        commentPreview.hide().empty();
       });
     }
-
-    const previewButton = commentForm.find("button[name=preview]");
-    previewButton.attr("type", "button");
-
-    const displayPreview = (data) => {
-      commentPreview.html('<h2>Предпросмотр</h2>' + data.preview);
-
-      $script.ready('hljs', function() {
-        $('pre code', commentPreview).each((_i, block) => {
-          hljs.highlightBlock(block);
-        });
-      });
-
-      if (data.errors) {
-        const errors = $('<div class="error">');
-        data.errors.forEach((v) => {
-          errors.append($("<span>").text(v));
-          errors.append($("<br>"));
-        });
-        commentPreview.prepend(errors);
-        resetCaptcha();
-      }
-
-      scrollToPreview(commentPreview);
-    };
-
-    const ajaxError = (jqXHR, textStatus, errorThrown) => {
-      commentPreview.empty().append(
-        $('<div class="error">')
-          .text(`Не удалось выполнить запрос, попробуйте повторить еще раз. ${errorThrown}`)
-      );
-      resetCaptcha();
-      scrollToPreview(commentPreview);
-    };
-
-    previewButton.on("click", () => {
-      previewButton.prop("disabled", true);
-      const form = commentForm.serialize() + "&preview=preview";
-
-      startSpinner(commentForm);
-      clearErrors(commentForm);
-
-      $.ajax({
-        method: "POST",
-        url: "/add_comment_ajax",
-        data: form,
-        timeout: 10000
-      }).always(() => {
-        previewButton.prop("disabled", false);
-        stopSpinner(commentForm);
-      }).fail(ajaxError).done(displayPreview);
-    });
 
     let submitInProcess = false;
 
@@ -356,14 +413,25 @@ $script.ready('jquery', function() {
       }).fail((jqXHR, textStatus, errorThrown) => {
         window._commentSubmitting = false;
         window.addEventListener('beforeunload', warnOnUnloadComment);
-        ajaxError(jqXHR, textStatus, errorThrown);
+        commentForm.prepend(
+          $('<div class="error" error>').text('Не удалось выполнить запрос, попробуйте повторить еще раз. ' + errorThrown)
+        );
+        resetCaptcha();
       }).done((data) => {
         if (data.url) {
           window.location.href = data.url;
         } else {
           window._commentSubmitting = false;
           window.addEventListener('beforeunload', warnOnUnloadComment);
-          displayPreview(data);
+          if (data.errors) {
+            const errorDiv = $('<div class="error" error>');
+            data.errors.forEach((v) => {
+              errorDiv.append($('<span>').text(v));
+              errorDiv.append($('<br>'));
+            });
+            commentForm.prepend(errorDiv);
+          }
+          resetCaptcha();
         }
       });
     });

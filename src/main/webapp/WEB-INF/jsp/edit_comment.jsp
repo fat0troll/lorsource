@@ -67,6 +67,8 @@
         form_action_url="${form_action_url}"
         cancel="true"
         autoFocus="true"
+        formatModeFormId="${formatModeFormId}"
+        formatModeTitle="${formatModeTitle}"
         postscoreInfo="${postscoreInfo}"/>
 
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>

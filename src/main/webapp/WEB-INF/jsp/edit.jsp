@@ -127,14 +127,17 @@
     <br>
   </c:if>
 
-  <label>Разметка:*<br>
-  <select disabled>
-    <option selected>${mode}</option>
-  </select></label><br>
-
-  <div class="control-group">
-    <label for="form_msg">Сообщение</label>
-    <form:textarea path="msg" id="form_msg"/>
+  <div class="control-group" data-format-mode="${modeFormId}">
+    <div class="markup-tabs">
+      <ul class="markup-tabs__nav">
+        <li class="markup-tabs__tab active" data-tab="editor">${mode}</li>
+      </ul>
+      <div class="markup-tabs__content">
+        <div class="markup-tabs__panel active" data-panel="editor">
+          <form:textarea path="msg" id="form_msg"/>
+        </div>
+      </div>
+    </div>
     <div class="help-block"><b>Внимание:</b> прочитайте описание разметки
       <a target="_blank" href="/help/markdown.md">Markdown</a> или <a href="/help/lorcode.md" target="_blank">LORCODE</a>.</div>
   </div>

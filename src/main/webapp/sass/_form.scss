@@ -122,3 +122,93 @@ select {
 form .error {
     color: #f00;
 }
+
+.markup-tabs {
+  margin-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  max-width: 60em;
+}
+
+.markup-tabs__nav {
+  display: flex;
+  list-style: none;
+  margin: 0 !important;
+  padding: 0;
+  border-bottom: 1px solid var(--table-border-color);
+  gap: 0;
+}
+
+.markup-tabs__tab {
+  cursor: pointer;
+  border: 1px solid var(--table-border-color);
+  border-bottom: none;
+  color: var(--text-color);
+  background: transparent;
+  font-size: 0.9em;
+  user-select: none;
+
+  &.active {
+    border-color: var(--table-border-color) var(--table-border-color) var(--article-background);
+    border-radius: 0.2em 0.2em 0 0;
+    color: var(--text-color);
+    font-weight: 500;
+    background-color: var(--article-background);
+  }
+}
+
+#bd .markup-tabs__tab {
+  padding: 0.4em 0.8em;
+  margin: 0 0 -1px 0;
+  list-style: none;
+}
+
+#bd .markup-tabs__tab + .markup-tabs__tab {
+  margin-left: 0.5em;
+}
+
+.markup-tabs__content {
+  border: 1px solid var(--table-border-color);
+  border-top: none;
+  padding: 0;
+}
+
+.markup-tabs__panel {
+  display: none;
+
+  &.active {
+    display: block;
+  }
+}
+
+.markup-tabs__panel[data-panel="editor"] {
+  &.active {
+    display: flex;
+  }
+
+  textarea {
+    width: 100%;
+    border: none;
+    margin: 0;
+    padding: 0.5em;
+    box-sizing: border-box;
+  }
+}
+
+.markup-tabs:focus-within {
+  outline: 2px solid var(--link-color);
+}
+
+.markup-tabs__panel[data-panel="editor"] textarea:focus {
+  outline: none;
+}
+
+.markup-preview {
+  background-color: var(--article-background);
+  padding: 0.5em;
+  box-sizing: border-box;
+}
+
+.preview-button-js-hidden {
+  display: none !important;
+}

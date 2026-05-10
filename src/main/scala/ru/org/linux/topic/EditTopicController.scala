@@ -126,6 +126,7 @@ class EditTopicController(searchQueueSender: SearchQueueSender, topicService: To
 
     params.put("imagepost", Boolean.box(permissionService.isImagePostingAllowed(preparedTopic.section)))
     params.put("mode", messageText.markup.title)
+    params.put("modeFormId", messageText.markup.formId)
 
     params
   }
