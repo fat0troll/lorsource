@@ -92,6 +92,7 @@
         topic="${add.topic}"
         replyto="<%= replyto %>"
         form_action_url="${form_action_url}"
+        autoFocus="true"
         postscoreInfo="${postscoreInfo}"/>
 
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>

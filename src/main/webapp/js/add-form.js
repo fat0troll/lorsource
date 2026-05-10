@@ -14,11 +14,9 @@
  */
 
 window.setupFormWithSpinner = function(options) {
-  window._formWithSpinnerActive = true;
-
   function startSpinner($form) {
     const spinner = $("<i class='icon-spin spinner' style='margin-left: 0.5em'>");
-    $form.find(".form-actions button").last().after(spinner);
+    $form.find(".form-actions .btn").last().after(spinner);
   }
 
   $script.ready("plugins", function() {
@@ -43,6 +41,7 @@ window.setupFormWithSpinner = function(options) {
 
       const validateOpts = $.extend({}, options.validateOptions, {
         submitHandler: function(form) {
+          if (submitted) { return; }
           submitted = true;
           window.removeEventListener('beforeunload', warnOnUnload);
 
@@ -83,7 +82,7 @@ $script.ready(['jquery', 'hljs'], function() {
 
   function startSpinner($form) {
     var spinner = $("<i class='icon-spin spinner' style='margin-left: 0.5em'>");
-    $form.find(".form-actions button").last().after(spinner);
+    $form.find(".form-actions .btn").last().after(spinner);
   }
 
   function stopSpinner($form) {

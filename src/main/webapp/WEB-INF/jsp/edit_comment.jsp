@@ -66,6 +66,7 @@
         original="${add.original.id}"
         form_action_url="${form_action_url}"
         cancel="true"
+        autoFocus="true"
         postscoreInfo="${postscoreInfo}"/>
 
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>

@@ -28,6 +28,7 @@
 <%@ attribute name="ipBlockInfo" required="false" type="ru.org.linux.auth.IPBlockInfo" %>
 <%@ attribute name="postscoreInfo" required="true" type="java.lang.String" %>
 <%@ attribute name="lazyCaptcha" required="false" type="java.lang.Boolean" %>
+<%@ attribute name="autoFocus" required="false" type="java.lang.Boolean" %>
 
 <form:form modelAttribute="add" method="POST" action="${form_action_url}" id="commentForm">
   <lor:csrf/>
@@ -58,7 +59,14 @@
 
   <div class="control-group">
     <label for="msg">Сообщение</label>
-    <form:textarea id="msg" required="true" name="msg" path="msg"/><br>
+    <c:choose>
+      <c:when test="${autoFocus}">
+        <form:textarea id="msg" required="true" name="msg" path="msg" autofocus="autofocus"/>
+      </c:when>
+      <c:otherwise>
+        <form:textarea id="msg" required="true" name="msg" path="msg"/>
+      </c:otherwise>
+    </c:choose><br>
     <div class="help-block">Пустая строка (два раза Enter) начинает новый абзац.
                  Знак '&gt;' в начале абзаца выделяет абзац курсивом цитирования.<br>
       <c:if test="${template.formatMode == 'lorcode'}">

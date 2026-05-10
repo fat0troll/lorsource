@@ -49,6 +49,7 @@
         topic="${add.topic}"
         ipBlockInfo="${ipBlockInfo}"
         form_action_url="${form_action_url}"
+        autoFocus="true"
         postscoreInfo="${preparedMessage.postscoreInfo}"/>
 
 <jsp:include page="/WEB-INF/jsp/footer.jsp"/>

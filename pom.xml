@@ -868,6 +868,11 @@
           <includes>
             <include>target/${project.artifactId}-${project.version}/WEB-INF/jsp/head.jsp</include>
             <include>target/${project.artifactId}-${project.version}/WEB-INF/jsp/view-topic.jsp</include>
+            <include>target/${project.artifactId}-${project.version}/WEB-INF/jsp/add_comment.jsp</include>
+            <include>target/${project.artifactId}-${project.version}/WEB-INF/jsp/comment-message.jsp</include>
+            <include>target/${project.artifactId}-${project.version}/WEB-INF/jsp/edit_comment.jsp</include>
+            <include>target/${project.artifactId}-${project.version}/WEB-INF/jsp/add.jsp</include>
+            <include>target/${project.artifactId}-${project.version}/WEB-INF/jsp/edit.jsp</include>
           </includes>
           <replacements>
             <replacement>
