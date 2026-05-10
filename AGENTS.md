@@ -65,6 +65,13 @@ mvn jetty:stop
 
 Server starts at http://127.0.0.1:8080/
 
+All users in test development database has password 'passwd'. Use following users for testing:
+
+* maxcom: administrator, full permissions
+* svu: moderator
+* Shaman007: corrector
+* edo: user (score >= 50)
+
 ### Other Commands
 ```bash
 mvn clean                 # Clean target directory
@@ -128,7 +135,8 @@ mvn dependency:tree      # Show dependency tree
 ### Database Access
 
 - Use Spring's `JdbcTemplate` and `NamedParameterJdbcTemplate`
-- Use `@Transactional` for database operations on Java and `.transactional()` on Scala 
+- All database access must be implemented in Scala.
+- Use `.transactional()` for transactional database operations
 - Repository pattern with `@Repository` annotation
 
 ### Dependencies
