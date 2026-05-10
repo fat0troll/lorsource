@@ -66,7 +66,7 @@ window.setupFormWithSpinner = function(options) {
   });
 };
 
-$script.ready(['jquery', 'hljs'], function() {
+$script.ready('jquery', function() {
   'use strict';
 
   if (window._formWithSpinnerActive) {
@@ -280,8 +280,11 @@ $script.ready(['jquery', 'hljs'], function() {
 
     const displayPreview = (data) => {
       commentPreview.html('<h2>Предпросмотр</h2>' + data.preview);
-      $('pre code', commentPreview).each((_i, block) => {
-        hljs.highlightBlock(block);
+
+      $script.ready('hljs', function() {
+        $('pre code', commentPreview).each((_i, block) => {
+          hljs.highlightBlock(block);
+        });
       });
 
       if (data.errors) {
