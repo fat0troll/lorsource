@@ -125,7 +125,7 @@ h6 {
   font-size: 1.098em
 }
 
-.msg_body {
+#bd .msg_body {
   // sizes calculated at https://www.modularscale.com/?1&em&1.098
   h1 {
     font-size: 1.752em;
@@ -152,9 +152,7 @@ h6 {
   h6 {
     font-size: 1.098em
   }
-}
 
-.msg_body {
   table {
     margin-bottom: 1em;
     width: 100%;
@@ -177,9 +175,16 @@ h6 {
   height: auto;
 }
 
-.comment {
+#bd .comment {
   h1, h2, h3, h4, h5, h6 {
     font-size: 1em;
+  }
+}
+
+#bd .comment .msg_body {
+  h1, h2 {
+    margin-top: 0.25em;
+    margin-bottom: 0;
   }
 }
 

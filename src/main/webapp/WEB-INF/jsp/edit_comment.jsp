@@ -44,8 +44,10 @@
 </c:if>
 </p>
 
+<div class="comment">
 <div class=messages>
   <lor:comment commentsAllowed="false" showMenu="false" comment="${comment}" topic="${add.topic}"/>
+</div>
 </div>
 
 <form:form modelAttribute="add">

@@ -53,6 +53,7 @@
         replyto = onComment.getId();
     %>
 
+    <div class="comment">
     <div class=messages>
         <lor:comment
                 commentsAllowed="false"
@@ -60,13 +61,16 @@
                 comment="${onComment}"
                 topic="${add.topic}"/>
     </div>
+    </div>
 </c:if>
 
 <c:if test="${comment!=null}">
   <p><b>Ваше сообщение</b></p>
+  <div class="comment">
   <div class=messages>
     <lor:comment commentsAllowed="false" showMenu="false" comment="${comment}" topic="${add.topic}"/>
   </div>
+</div>
 </c:if>
 
 <form:form modelAttribute="add">

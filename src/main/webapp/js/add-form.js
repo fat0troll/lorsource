@@ -108,7 +108,7 @@ function initPreviewTabs(formElement, hidePreviewButton) {
   previewPanel.className = 'markup-tabs__panel';
   previewPanel.dataset.panel = 'preview';
   const previewContent = document.createElement('div');
-  previewContent.className = 'markup-preview';
+  previewContent.className = hidePreviewButton ? 'markup-preview' : 'markup-preview msg_body';
   previewPanel.appendChild(previewContent);
   panelsContainer.appendChild(previewPanel);
 
