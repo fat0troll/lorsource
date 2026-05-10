@@ -714,7 +714,7 @@
             <configuration>
               <encoding>UTF-8</encoding>
               <includes>
-                <include>addComments.js</include>
+                <include>add-form.js</include>
                 <include>lor_view_diff_history.js</include>
                 <include>realtime.js</include>
                 <include>tagsAutocomplete.js</include>

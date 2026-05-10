@@ -793,6 +793,7 @@ pre code .container:before, pre code .container:after {
 }
 
 .spinner {
+  display: inline-block;
   animation: spinner 2s infinite linear;
   -webkit-animation: spinner 2s infinite linear;
 }

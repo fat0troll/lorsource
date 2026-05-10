@@ -32,16 +32,15 @@
 <jsp:include page="/WEB-INF/jsp/head.jsp"/>
 <title>Редактирование сообщения</title>
 <script type="text/javascript">
-  $script.ready("plugins", function() {
-    $(function() {
-      $("#messageForm").validate({
-        messages : {
-          title : "Введите заголовок"
-        }
-      });
+  $script('/js/add-form.js?MAVEN_BUILD_TIMESTAMP', function() {
+    setupFormWithSpinner({
+      formSelector: '#messageForm',
+      textareaSelector: '#form_msg',
+      validateOptions: {
+        messages: { title: "Введите заголовок" }
+      }
     });
   });
-
   $script.ready("plugins", function() {
     $script("/js/tagsAutocomplete.js");
   });

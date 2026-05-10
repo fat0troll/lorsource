@@ -74,7 +74,7 @@
 <script type="text/javascript">
   $script.ready('lorjs', function() { initNextPrevKeys(); });
   <c:if test="${not message.expired and messageMenu.commentsAllowed}">
-    $script('/js/addComments.js?MAVEN_BUILD_TIMESTAMP');
+    $script('/js/add-form.js?MAVEN_BUILD_TIMESTAMP');
   </c:if>
 
   <c:if test="${not message.expired and not pages.hasNext}">

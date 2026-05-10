@@ -23,6 +23,16 @@
 <jsp:include page="/WEB-INF/jsp/head.jsp"/>
 
 <title>Изменить комментарий</title>
+<script type="text/javascript">
+  window._formWithSpinnerActive = true;
+  $script('/js/add-form.js?MAVEN_BUILD_TIMESTAMP', function() {
+    setupFormWithSpinner({
+      formSelector: '#commentForm',
+      textareaSelector: '#msg',
+      validateOptions: {}
+    });
+  });
+</script>
 <jsp:include page="/WEB-INF/jsp/header.jsp"/>
 
 <h1>Изменить комментарий</h1>

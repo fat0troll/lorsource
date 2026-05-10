@@ -33,26 +33,15 @@
 
 <title>Добавить сообщение</title>
 <script type="text/javascript">
-  $script.ready("plugins", function() {
-    $(function() {
-      $("#messageForm").validate({
-        messages : {
-          title : "Введите заголовок"
-        }
-      });
-
-      window.onbeforeunload = function() {
-          if ($("#form_msg").val()!='') {
-            return "Вы что-то напечатали в форме. Все введенные данные будут потеряны при закрытии страницы.";
-          }
-        };
-
-      $("#messageForm").on("submit", function() {
-          window.onbeforeunload = null;
-      });
+  $script('/js/add-form.js?MAVEN_BUILD_TIMESTAMP', function() {
+    setupFormWithSpinner({
+      formSelector: '#messageForm',
+      textareaSelector: '#form_msg',
+      validateOptions: {
+        messages: { title: "Введите заголовок" }
+      }
     });
   });
-
   $script.ready("plugins", function() {
     $script("/js/tagsAutocomplete.js");
   });

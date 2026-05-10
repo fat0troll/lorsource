@@ -25,13 +25,12 @@
 
 <title>Добавить комментарий</title>
 <script type="text/javascript">
-  $script.ready("jquery", function() {
-    $(function() {
-      window.onbeforeunload = function() {
-        if ($("#msg").val()!='') {
-          return "Вы что-то напечатали в форме. Все введенные данные будут потеряны при закрытии страницы.";
-        }
-      };
+  window._formWithSpinnerActive = true;
+  $script('/js/add-form.js?MAVEN_BUILD_TIMESTAMP', function() {
+    setupFormWithSpinner({
+      formSelector: '#commentForm',
+      textareaSelector: '#msg',
+      validateOptions: {}
     });
   });
 </script>

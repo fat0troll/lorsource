@@ -60,7 +60,7 @@ var RealtimeContext = {
               if (event.data.startsWith("comment ")) {
                 var comment = event.data.substring("comment ".length)
 
-                if (!$('#commentForm').find(".spinner").length) {
+                if (!$('#commentForm').find(".spinner").length && !window._commentSubmitting) {
                   if ($("#realtime").is(":hidden")) {
                     $("#realtime")
                         .text("Был добавлен новый комментарий. ")
