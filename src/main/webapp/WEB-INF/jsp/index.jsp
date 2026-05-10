@@ -100,18 +100,18 @@
   </script>
 
 <nav>
+  <c:forEach var="item" items="${uncommitedCounts}">
+    <c:if test="${(template.prof.showGalleryOnMain or item._1().id==1 or template.moderatorSession or template.correctorSession) and (item._2() > 0)}">
+      <a class="btn btn-default" href="view-all.jsp?section=${item._1().id}">${item._1().uncommitedName()}: ${item._2()}</a>
+    </c:if>
+  </c:forEach>
+
   <c:if test="${not template.prof.showGalleryOnMain}">
     <a href="${addNews}" class="btn btn-primary">Добавить новость</a>
   </c:if>
   <c:if test="${template.prof.showGalleryOnMain}">
     <a href="/add-section.jsp" class="btn btn-primary">Добавить</a>
   </c:if>
-
-  <c:forEach var="item" items="${uncommitedCounts}">
-    <c:if test="${(template.prof.showGalleryOnMain or item._1().id==1 or template.moderatorSession or template.correctorSession) and (item._2() > 0)}">
-      <a class="btn btn-default" href="view-all.jsp?section=${item._1().id}">${item._1().uncommitedName()}: ${item._2()}</a>
-    </c:if>
-  </c:forEach>
 </nav>
 
 <c:forEach var="msg" items="${news}">
