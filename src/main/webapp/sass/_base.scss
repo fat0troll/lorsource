@@ -471,6 +471,24 @@ textarea.error {
     padding:0;
 }
 
+#editRegForm {
+    input[type='text'],
+    input[type='url'],
+    input[type='email'],
+    input[type="password"] {
+        width: 100%;
+        max-width: 60em;
+        box-sizing: border-box;
+    }
+
+    textarea {
+        width: 100%;
+        max-width: 60em;
+        height: 10em;
+        box-sizing: border-box;
+    }
+}
+
 #commentForm, #messageForm {
   margin-top: 0.5em;
   font-size: 1rem;
