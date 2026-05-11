@@ -23,7 +23,7 @@ import ru.org.linux.test.WebHelper
 import sttp.client4.*
 import sttp.model.{HeaderNames, StatusCode, Uri}
 
-object EditRegisterControllerWebTest:
+object EditProfileControllerWebTest:
   private val MAXCOM_NAME = "Максим Валянский"
   private val MAXCOM_URL = "http://maxcom.pp.ru/"
   private val MAXCOM_EMAIL = "max.valjanski+test93@gmail.com"
@@ -39,8 +39,8 @@ object EditRegisterControllerWebTest:
 
 @ContextHierarchy(Array(new ContextConfiguration(value = Array("classpath:database.xml")),
   new ContextConfiguration(classes = Array(classOf[SimpleIntegrationTestConfiguration]))))
-class EditRegisterControllerWebTest extends FunSuite with WebHelper:
-  import EditRegisterControllerWebTest._
+class EditProfileControllerWebTest extends FunSuite with WebHelper:
+  import EditProfileControllerWebTest._
 
   new TestContextManager(this.getClass).prepareTestInstance(this)
 

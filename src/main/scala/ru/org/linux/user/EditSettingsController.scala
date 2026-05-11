@@ -71,7 +71,7 @@ class EditSettingsController(profileDao: ProfileDao, userPermissionService: User
 
     params.put("canLoadUserpic", Boolean.box(userPermissionService.canLoadUserpic))
 
-    new ModelAndView("edit-profile", params)
+    new ModelAndView("edit-settings", params)
   }
 
   @RequestMapping(method = Array(RequestMethod.POST))

@@ -1,4 +1,8 @@
-<%@ page session="false" contentType="text/html; charset=utf-8"%>
+<%@ page session="false" %>
+<%@ page contentType="text/html; charset=utf-8"%>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%--
   ~ Copyright 1998-2026 Linux.org.ru
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,163 +17,95 @@
   ~    See the License for the specific language governing permissions and
   ~    limitations under the License.
   --%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%--@elvariable id="template" type="ru.org.linux.site.Template"--%>
-<%--@elvariable id="currentUser" type="ru.org.linux.user.User"--%>
+<jsp:include page="head.jsp"/>
 
-<jsp:include page="/WEB-INF/jsp/head.jsp"/>
-
-<title>Настройки</title>
+<title>Редактирование профиля</title>
 <script type="text/javascript">
-$script.ready('plugins', function() {
+$script.ready("plugins", function() {
   $(function() {
-    $("#profileForm").validate();
-  });
-});
-
-$script.ready('jquery', function() {
-  $(function() {
-    $("#profileForm").on("submit", function() {
-      localStorage.removeItem('lor-theme');
+    $("#editRegForm").validate({
+      rules : {
+        password2: {
+          equalTo: "#password"
+        }
+      }
     });
   });
 });
 </script>
 
-<jsp:include page="/WEB-INF/jsp/header.jsp"/>
+<jsp:include page="header.jsp"/>
 
-<h1>Настройки</h1>
+<h1>Редактирование профиля</h1>
 
 <nav>
-  <a href="/people/${currentUser.nick}/edit" class="btn btn-default">Редактировать профиль</a>
+  <a href="/people/${currentUser.nick}/edit" class="btn btn-selected">Редактировать профиль</a>
   <c:if test="${canLoadUserpic}">
     <a class="btn btn-default" href="/addphoto.jsp">Добавить фотографию</a>
   </c:if>
-  <a href="/people/${currentUser.nick}/settings" class="btn btn-selected">Настройки</a>
+  <a class="btn btn-default" href="/people/${form.nick}/settings">Настройки</a>
 </nav>
 
-<form method=POST id="profileForm" action="/people/${nick}/settings">
-<lor:csrf/>
-<table>
-<tr><td><label for="photos">Показывать фотографии</label></td>
-<td><input type="checkbox" id="photos" name="photos" <c:if test="${template.prof.showPhotos}">checked</c:if> ></td></tr>
-<tr><td><label for="hideAdsense">Показывать меньше рекламы (доступна пользователям начиная с одной зеленой звезды)</label></td>
-<td><input type="checkbox" id="hideAdsense" <c:if test="${currentUser.score<100 && !template.prof.hideAdsense}">disabled</c:if> name="hideAdsense" <c:if test="${template.prof.hideAdsense}">checked</c:if> ></td></tr>
-<tr><td><label for="mainGallery">Показывать галерею, опросы и статьи в ленте на главной</label></td>
-<td><input type="checkbox" id="mainGallery" name="mainGallery" <c:if test="${template.prof.showGalleryOnMain}">checked</c:if> ></td></tr>
-  <tr>
-    <td><label for="oldTracker">Старый вид трекера и форума</label></td>
-    <td><input type="checkbox" id="oldTracker" name="oldTracker"
-               <c:if test="${template.prof.oldTracker}">checked</c:if> ></td>
-  </tr>
-  <tr>
-    <td><label for="reactionNotification">Уведомлять о реакциях</label></td>
-    <td><input type="checkbox" id="reactionNotification" name="reactionNotification"
-               <c:if test="${template.prof.reactionNotification}">checked</c:if> ></td>
-  </tr>
-  <tr><td colspan=2><hr></td></tr>
+<form:form modelAttribute="form" method="POST" action="/people/${form.nick}/edit" id="editRegForm">
+    <lor:csrf/>
+    <form:errors element="label" cssClass="error"/>
+    <dl>
+        <dt><label for="name">Имя</label></dt>
+        <dd>
+            <form:input readonly="${not canEditInfo}" path="name" size="40" cssErrorClass="error" maxlength="255"/>
+            <form:errors path="name" element="label" cssClass="error" for="name"/>
+            <span class="help-block">&nbsp;</span>
+        </dd>
 
+        <dt><label for="password">Новый пароль</label></dt>
+        <dd>
+            <form:password path="password" size="40" cssErrorClass="error" />
+            <form:errors path="password" element="label" cssClass="error" for="password"/>
+            <span class="help-block">не заполняйте если не хотите менять пароль</span>
+        </dd>
 
-<tr>
-  <td valign=top><span id="style-label">Тема</span></td>
-  <td>
-    <c:set value="${template.style}" var="style"/>
+        <dt><label for="password2">Подтвердите новый пароль</label></dt>
+        <dd>
+            <form:password path="password2" size="40" cssErrorClass="error" />
+            <form:errors path="password2" element="label" cssClass="error" for="password2"/>
+            <span class="help-block">не заполняйте если не хотите менять пароль</span>
+        </dd>
 
-    <div role="radiogroup" aria-labelledby="style-label">
-      <c:forEach var="s" items="${stylesList}" varStatus="status">
-        <label><input type=radio id="style-${status.index}" name=style value="${s}" <c:if test="${s == style}">checked</c:if>>${s}</label>
-      </c:forEach>
-    </div>
-  </td>
-</tr>
+        <dt><label for="url">URL</label></dt>
+        <dd>
+            <form:input readonly="${not canEditInfo}" path="url" size="60" cssErrorClass="error" maxlength="255"/>
+            <form:errors path="url" element="label" cssClass="error" for="url"/>
+            <span class="help-block">не забудьте добавить <i>http://</i></span>
+        </dd>
 
-  <tr><td colspan=2><hr></td></tr>
-  <tr>
-    <td valign=top><span id="topics-label">Число тем форума на странице</span></td>
-    <td>
-      <c:set value="${template.prof.topics}" var="topics"/>
+        <dt><label for="email">E-mail</label></dt>
+        <dd>
+            <form:input path="email" type="email" cssClass="email" cssErrorClass="email error" size="60" />
+            <form:errors path="email" element="label" cssClass="error" for="email"/>
+            <span class="help-block">виден только вам и модераторам</span>
+        </dd>
 
-      <div role="radiogroup" aria-labelledby="topics-label">
-        <c:forEach var="s" items="${topicsValues}" varStatus="status">
-          <label><input type=radio id="topics-${status.index}" name=topics value="${s}" <c:if test="${s == topics}">checked</c:if>>${s}</label>
-        </c:forEach>
-      </div>
-    </td>
-  </tr>
+        <dt><label for="town">Город</label></dt>
+        <dd>
+            <form:input readonly="${not canEditInfo}" path="town" size="60" cssErrorClass="error" maxlength="100"/>
+            <form:errors path="town" element="label" cssClass="error" for="town"/>
+            <span class="help-block">просьба писать русскими буквами без сокращений, например: Москва, Нижний Новгород, Троицк (Московская область)</span>
+        </dd>
 
-  <tr><td colspan=2><hr></td></tr>
-  <tr>
-    <td valign=top><span id="messages-label">Число комментариев на странице</span></td>
-    <td>
-      <c:set value="${template.prof.messages}" var="messages"/>
+        <dt><label for="info">Дополнительная информация</label></dt>
+        <dd>
+            <form:textarea readonly="${not canEditInfo}" path="info" cols="60" rows="10" cssErrorClass="error"/>
+            <form:errors path="info" element="label" cssClass="error" for="info"/>
+            <span class="help-block"><a href="/help/lorcode.md" target="_blank" title="справка откроется в новом окне">справка по разметке LORCODE</a></span>
+        </dd>
 
-      <div role="radiogroup" aria-labelledby="messages-label">
-        <c:forEach var="s" items="${messagesValues}" varStatus="status">
-          <label><input type=radio id="messages-${status.index}" name=messages value="${s}" <c:if test="${s == messages}">checked</c:if>>${s}</label>
-        </c:forEach>
-      </div>
-    </td>
-  </tr>
-
-  <tr><td colspan=2><hr></td></tr>
-  <tr>
-  <td valign=top><span id="trackerMode-label">Фильтр трекера по умолчанию</span></td>
-  <td>
-    <c:set value="${template.prof.trackerMode.value}" var="trackerMode"/>
-
-    <div role="radiogroup" aria-labelledby="trackerMode-label">
-      <c:forEach var="s" items="${trackerModes}" varStatus="status">
-        <label><input type=radio id="trackerMode-${status.index}" name=trackerMode value="${s.value}" <c:if test="${s.value == trackerMode}">checked</c:if>>${s.label}</label>
-      </c:forEach>
-    </div>
-  </td>
-</tr>
-
-  <tr><td colspan="2"><hr></td></tr>
-  <tr>
-  <td valign="top"><span id="avatar-label">При отсутствии аватара показывать</span></td>
-  <td>
-    <c:set value="${template.prof.avatarMode}" var="avatar"/>
-
-    <div role="radiogroup" aria-labelledby="avatar-label">
-      <c:forEach var="s" items="${avatarsList}" varStatus="status">
-        <label><input type=radio id="avatar-${status.index}" name=avatar value="${s}" <c:if test="${s == avatar}">checked</c:if>>${s}</label>
-      </c:forEach>
-    </div>
-  </td>
-</tr>
-
-  <tr><td colspan=2><hr></td></tr>
-<tr>
-  <td valign=top><span id="format-mode-label">Разметка текста</span></td>
-  <td>
-    <div role="radiogroup" aria-labelledby="format-mode-label">
-      <c:forEach var="s" items="${formatModes}" varStatus="status">
-        <label><input type=radio id="format_mode-${status.index}" name=format_mode value="${s.key}" <c:if test="${s.key == format_mode}">checked</c:if>>${s.value}</label>
-      </c:forEach>
-    </div>
-  </td>
-</tr>
-
-</table>
-
-<button type=submit class="btn btn-primary">Установить</button>
-</form>
-
-<h2>Другие настройки</h2>
-<ul>
-<c:if test="${canLoadUserpic}">
-  <li><a href="/addphoto.jsp">Добавить фотографию</a></li>
-</c:if>
-<li><a href="/people/${nick}/edit">Изменение регистрации</a></li>
-<li><a href="<c:url value="/user-filter"/>">Настройка фильтрации сообщений</a>
-<c:if test="${currentUser.score >= 100 && !template.moderatorSession && !currentUser.administrator && !currentUser.frozen}">
-  <li><a href="/deregister.jsp">Удаление аккаунта</a>
-</c:if>
-</ul>
-
-<p><b>Внимание!</b> Настройки на некоторых уже посещенных страницах могут
-не отображаться. Очистите кеш или используйте кнопку <i>Reload</i> вашего браузера.
-<jsp:include page="/WEB-INF/jsp/footer.jsp"/>
+        <dt><label for="oldpass">Пароль</label></dt>
+        <dd>
+            <form:password path="oldpass" size="40" cssErrorClass="error" required="required"/>
+            <form:errors path="oldpass" element="label" cssClass="error" for="oldpass"/>
+            <span class="help-block">&nbsp;</span>
+        </dd>
+    </dl>
+    <button type="submit" class="btn btn-primary">Применить изменения</button>
+</form:form>
+<jsp:include page="footer.jsp"/>
