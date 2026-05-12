@@ -22,13 +22,13 @@ import ru.org.linux.util.URLUtil
 import jakarta.mail.internet.AddressException
 import jakarta.mail.internet.InternetAddress
 
-class EditRegisterRequestValidator(emailDomainsBlockDao: EmailDomainsBlockDao)
+class EditProfileRequestValidator(emailDomainsBlockDao: EmailDomainsBlockDao)
   extends RegisterRequestValidator(emailDomainsBlockDao) {
 
-  override def supports(clazz: Class[?]): Boolean = classOf[EditRegisterRequest] == clazz
+  override def supports(clazz: Class[?]): Boolean = classOf[EditProfileRequest] == clazz
 
   override def validate(target: AnyRef, errors: Errors): Unit = {
-    val form = target.asInstanceOf[EditRegisterRequest]
+    val form = target.asInstanceOf[EditProfileRequest]
 
     if (!Strings.isNullOrEmpty(form.getTown)) {
       if (StringUtil.escapeHtml(form.getTown).length > TOWN_LENGTH) {

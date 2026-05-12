@@ -53,15 +53,15 @@ class EditProfileController(
     emailDomainsBlockDao: EmailDomainsBlockDao,
     userPermissionService: UserPermissionService)
     extends StrictLogging:
-  private val validator = new EditRegisterRequestValidator(emailDomainsBlockDao)
+  private val validator = new EditProfileRequestValidator(emailDomainsBlockDao)
 
   @RequestMapping(method = Array(RequestMethod.GET))
   def show(
-      @ModelAttribute("form")
-      form: EditRegisterRequest,
-      @PathVariable("nick")
+            @ModelAttribute("form")
+      form: EditProfileRequest,
+            @PathVariable("nick")
       nick: String,
-      response: HttpServletResponse): ModelAndView =
+            response: HttpServletResponse): ModelAndView =
     AuthorizedOnly { implicit currentUser =>
       if currentUser.user.nick != nick then
         throw new AccessViolationException("Not authorized")
@@ -95,13 +95,13 @@ class EditProfileController(
 
   @RequestMapping(method = Array(RequestMethod.POST))
   def edit(
-      request: HttpServletRequest,
-      response: HttpServletResponse,
-      @PathVariable("nick")
+            request: HttpServletRequest,
+            response: HttpServletResponse,
+            @PathVariable("nick")
       nick: String,
-      @Valid @ModelAttribute("form")
-      form: EditRegisterRequest,
-      errors: Errors): ModelAndView =
+            @Valid @ModelAttribute("form")
+      form: EditProfileRequest,
+            errors: Errors): ModelAndView =
     AuthorizedOnly { implicit currentUser =>
       if currentUser.user.nick != nick then
         throw new AccessViolationException("Not authorized")

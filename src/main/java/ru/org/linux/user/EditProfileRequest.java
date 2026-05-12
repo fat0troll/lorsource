@@ -15,7 +15,7 @@
 
 package ru.org.linux.user;
 
-public class EditRegisterRequest {
+public class EditProfileRequest {
   private String email;
   private String name;
   private String url;
