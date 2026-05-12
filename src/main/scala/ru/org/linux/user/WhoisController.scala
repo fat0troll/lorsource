@@ -26,8 +26,9 @@ import org.springframework.web.servlet.ModelAndView
 import org.springframework.web.servlet.view.RedirectView
 import ru.org.linux.auth.AccessViolationException
 import ru.org.linux.auth.AuthUtil.MaybeAuthorized
+import ru.org.linux.markup.{MessageTextService, MarkupType}
+import ru.org.linux.msgbase.MessageText
 import ru.org.linux.topic.{TopicDao, TopicPermissionService}
-import ru.org.linux.util.bbcode.LorCodeService
 
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -39,10 +40,10 @@ import scala.jdk.FutureConverters.FutureOps
 
 @Controller
 class WhoisController(userStatisticsService: UserStatisticsService, userDao: UserDao, ignoreListDao: IgnoreListDao,
-                      lorCodeService: LorCodeService, userTagService: UserTagService,
-                      topicPermissionService: TopicPermissionService, userService: UserService, userLogDao: UserLogDao,
-                      userLogPrepareService: UserLogPrepareService, remarkDao: RemarkDao, memoriesDao: MemoriesDao,
-                      topicDao: TopicDao, userPermissionService: UserPermissionService) extends StrictLogging {
+                       textService: MessageTextService, userTagService: UserTagService,
+                       topicPermissionService: TopicPermissionService, userService: UserService, userLogDao: UserLogDao,
+                       userLogPrepareService: UserLogPrepareService, remarkDao: RemarkDao, memoriesDao: MemoriesDao,
+                       topicDao: TopicDao, userPermissionService: UserPermissionService) extends StrictLogging {
   @RequestMapping(value = Array("/people/{nick}/profile"), method = Array(RequestMethod.GET, RequestMethod.HEAD))
   def getInfoNew(@PathVariable nick: String, request: HttpServletRequest): CompletionStage[ModelAndView] = MaybeAuthorized { currentUserOpt =>
     val user = userService.getUser(nick)
@@ -126,10 +127,9 @@ class WhoisController(userStatisticsService: UserStatisticsService, userDao: Use
 
     val userinfo = userInfo.text
 
-    if (!Strings.isNullOrEmpty(userinfo)) {
+    if !Strings.isNullOrEmpty(userinfo) then
       mv.getModel.put("userInfoText",
-        lorCodeService.parseComment(userinfo, !topicPermissionService.followAuthorLinks(user), LorCodeService.Plain))
-    }
+        textService.renderCommentText(MessageText(userinfo, userInfo.markup), !topicPermissionService.followAuthorLinks(user)))
 
     mv.addObject("favoriteTags", userTagService.favoritesGet(user))
 

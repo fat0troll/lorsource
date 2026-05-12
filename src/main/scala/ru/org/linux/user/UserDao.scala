@@ -23,6 +23,7 @@ import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.scala.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import ru.org.linux.markup.MarkupType
 import ru.org.linux.util.StringUtil
 import ru.org.linux.util.URLUtil
 
@@ -104,7 +105,7 @@ class UserDao(ds: DataSource) extends StrictLogging {
    */
   def getUserInfo(user: User): UserInfo =
     jdbcTemplate.queryForObjectAndMap(
-      "SELECT url, town, lastlogin, regdate, freezing_reason, frozen_by, userinfo FROM users WHERE id=?",
+      "SELECT url, town, lastlogin, regdate, freezing_reason, frozen_by, userinfo, userinfo_markup FROM users WHERE id=?",
       user.id
     ) { (rs, _) =>
       UserInfo(rs)
@@ -238,9 +239,18 @@ class UserDao(ds: DataSource) extends StrictLogging {
    * Обновление дополнительной информации пользователя
    * @param userid пользователь
    * @param text текст дополнительной информации
+   * @param markup тип разметки
    */
-  def updateUserInfo(userid: Int, text: String): Boolean =
-    jdbcTemplate.update("UPDATE users SET userinfo=? where id=? AND userinfo is distinct from ?", text, userid, text) > 0
+  def updateUserInfo(userid: Int, text: String, markup: MarkupType): Boolean =
+    jdbcTemplate.update("UPDATE users SET userinfo=?, userinfo_markup=? where id=? AND (userinfo IS DISTINCT FROM ? OR userinfo_markup IS DISTINCT FROM ?)", text, markup.id, userid, text, markup.id) > 0
+
+  /**
+   * Сброс дополнительной информации пользователя (модератором).
+   * Не меняет userinfo_markup.
+   * @param userid пользователь
+   */
+  def resetUserInfo(userid: Int): Boolean =
+    jdbcTemplate.update("UPDATE users SET userinfo=null WHERE id=? AND userinfo IS NOT NULL", userid) > 0
 
   /**
    * Изменение шкворца пользовтаеля, принимает отрицательные и положительные значения
@@ -405,15 +415,16 @@ class UserDao(ds: DataSource) extends StrictLogging {
 
     jdbcTemplate.update(
       "INSERT INTO users " +
-        "(id, name, nick, passwd, url, email, town, score, max_score,regdate) " +
-        "VALUES (?,?,?,?,?,?,?,45,45,current_timestamp)",
+        "(id, name, nick, passwd, url, email, town, score, max_score, regdate, userinfo_markup) " +
+        "VALUES (?,?,?,?,?,?,?,45,45,current_timestamp,?)",
       Integer.valueOf(userid),
       name,
       nick,
       encryptor.encryptPassword(password),
       if (url == null) null else URLUtil.fixURL(url),
       mail.getAddress,
-      town
+      town,
+      Profile.DEFAULT.formatMode.id
     )
 
     userid

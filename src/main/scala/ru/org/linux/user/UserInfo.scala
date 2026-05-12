@@ -15,6 +15,8 @@
 
 package ru.org.linux.user
 
+import ru.org.linux.markup.MarkupType
+
 import java.sql.{ResultSet, Timestamp}
 import javax.annotation.Nullable
 import scala.beans.BeanProperty
@@ -26,7 +28,8 @@ case class UserInfo(
   @BeanProperty registrationDate: Timestamp,
   @Nullable @BeanProperty freezingReason: String,
   @BeanProperty frozenBy: Int,
-  @Nullable @BeanProperty text: String
+  @Nullable @BeanProperty text: String,
+  @BeanProperty markup: MarkupType
 )
 
 object UserInfo {
@@ -38,7 +41,8 @@ object UserInfo {
       registrationDate = rs.getTimestamp("regdate"),
       freezingReason = rs.getString("freezing_reason"),
       frozenBy = rs.getInt("frozen_by"),
-      text = rs.getString("userinfo")
+      text = rs.getString("userinfo"),
+      markup = MarkupType.of(rs.getString("userinfo_markup"))
     )
   }
 }

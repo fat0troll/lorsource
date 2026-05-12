@@ -21,6 +21,7 @@ public class EditRegisterRequest {
   private String url;
   private String town;
   private String info;
+  private String infoMarkup;
   private String oldpass;
 
   private String password;
@@ -66,6 +67,14 @@ public class EditRegisterRequest {
 
   public void setInfo(String info) {
     this.info = info;
+  }
+
+  public String getInfoMarkup() {
+    return infoMarkup;
+  }
+
+  public void setInfoMarkup(String infoMarkup) {
+    this.infoMarkup = infoMarkup;
   }
 
   public String getPassword() {

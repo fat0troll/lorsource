@@ -21,6 +21,9 @@
 
 <title>Редактирование профиля</title>
 <script type="text/javascript">
+$script('/js/add-form.js?MAVEN_BUILD_TIMESTAMP', function() {
+  initPreviewTabs(document.getElementById('editRegForm'), false);
+});
 $script.ready("plugins", function() {
   $(function() {
     $("#editRegForm").validate({
@@ -94,9 +97,59 @@ $script.ready("plugins", function() {
 
         <dt><label for="info">Дополнительная информация</label></dt>
         <dd>
-            <form:textarea readonly="${not canEditInfo}" path="info" cssErrorClass="error"/>
+            <div class="control-group" data-format-mode="${infoMarkupFormId}">
+                <div class="markup-tabs">
+                    <ul class="markup-tabs__nav">
+                        <li class="markup-tabs__tab active" data-tab="editor">${infoMarkupTitle}</li>
+                    </ul>
+                    <div class="markup-tabs__content">
+                        <div class="markup-tabs__panel active" data-panel="editor">
+                            <form:textarea readonly="${not canEditInfo}" path="info"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="help-block">
+                    <c:if test="${infoMarkupFormId == 'lorcode'}">
+                        <b>Внимание:</b> прочитайте описание разметки <a href="/help/lorcode.md" target="_blank" title="[br] - перевод строки
+
+[b]жирный текст[/b]
+
+[i]курсив[/i]
+
+[u]подчёркнутый текст[/u]
+
+[s]зачёркнутый текст[/s]
+
+[em]emphasis[/em]
+
+[strong]stronger emphasis[/strong]
+
+[pre]preformatted text[/pre]
+
+[user]maxcom[/user] - ссылка на профиль пользователя.
+При использовании этого тега упомянутому пользователю приходит уведомление
+
+[code]код[/code]
+
+[inline]Строчное оформление кода[/inline]
+
+Цитата:
+[quote]цитата[/quote] или
+[quote='название цитаты']цитата[/quote] или
+>>цитата
+
+Ссылка:
+[url]http://www.linux.org.ru/[/url]
+можно с параметром, например:
+[url=http://www.example.com/]Сюда![/url]">LORCODE</a>.
+                    </c:if>
+                    <c:if test="${infoMarkupFormId == 'markdown'}">
+                        <b>Внимание:</b> прочитайте описание разметки <a target="_blank" href="/help/markdown.md">Markdown</a>.
+                    </c:if>
+                </div>
+            </div>
+            <input type="hidden" name="infoMarkup" value="${infoMarkupFormId}"/>
             <form:errors path="info" element="label" cssClass="error" for="info"/>
-            <span class="help-block"><a href="/help/lorcode.md" target="_blank" title="справка откроется в новом окне">справка по разметке LORCODE</a></span>
         </dd>
 
         <dt><label for="oldpass">Пароль</label></dt>

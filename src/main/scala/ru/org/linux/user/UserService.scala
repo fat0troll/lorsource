@@ -288,7 +288,7 @@ class UserService(siteConfig: SiteConfig, userDao: UserDao, ignoreListDao: Ignor
       val userInfo = userDao.getUserInfo(user)
 
       if ((userInfo.text != null) && userInfo.text.trim.nonEmpty) {
-        userDao.updateUserInfo(user.id, null)
+        userDao.resetUserInfo(user.id)
         userDao.changeScore(user.id, -10)
         userLogDao.logResetInfo(user, moderator, userInfo.text, -10)
       }
@@ -326,7 +326,7 @@ class UserService(siteConfig: SiteConfig, userDao: UserDao, ignoreListDao: Ignor
   }
 
   def updateUser(user: User, name: String, url: String, newEmail: Option[String], town: String,
-                 password: Option[String], info: String, ip: String): Unit = {
+                 password: Option[String], info: String, infoMarkup: MarkupType, ip: String): Unit = {
     transactional() { _ =>
       val changed = mutable.Map[String, String]()
 
@@ -336,7 +336,7 @@ class UserService(siteConfig: SiteConfig, userDao: UserDao, ignoreListDao: Ignor
 
       if (userDao.updateTown(user, town)) changed += "town" -> town
 
-      if (userDao.updateUserInfo(user.id, info)) changed += "info" -> info
+      if (userDao.updateUserInfo(user.id, info, infoMarkup)) changed += "info" -> info
 
       updateEmailPasswd(user, newEmail, password, ip)
 
@@ -377,7 +377,7 @@ class UserService(siteConfig: SiteConfig, userDao: UserDao, ignoreListDao: Ignor
       userDao.updateName(user, "")
       userDao.updateUrl(user, "")
       userDao.updateTown(user, "")
-      userDao.updateUserInfo(user.id, "")
+      userDao.updateUserInfo(user.id, "", Profile.DEFAULT.formatMode)
 
       userDao.block(user, user, "самостоятельная блокировка аккаунта")
       userLogDao.logBlockUser(user, user, "самостоятельная блокировка аккаунта")

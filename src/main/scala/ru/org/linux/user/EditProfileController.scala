@@ -32,6 +32,7 @@ import org.springframework.web.servlet.view.RedirectView
 import ru.org.linux.auth.*
 import ru.org.linux.auth.AuthUtil.AuthorizedOnly
 import ru.org.linux.email.EmailService
+import ru.org.linux.markup.MarkupType
 import ru.org.linux.util.ExceptionBindingErrorProcessor
 import ru.org.linux.util.StringUtil
 import ru.org.linux.util.URLUtil
@@ -69,16 +70,23 @@ class EditProfileController(
 
       val userInfo = userDao.getUserInfo(user)
 
+      val effectiveMarkup = if Strings.isNullOrEmpty(userInfo.text) || userInfo.text.trim.isEmpty
+        then currentUser.profile.formatMode
+        else userInfo.markup
+
       val mv = new ModelAndView("edit-profile")
 
       mv.getModel.put("canLoadUserpic", userPermissionService.canLoadUserpic)
       mv.getModel.put("canEditInfo", userPermissionService.canEditProfileInfo)
+      mv.getModel.put("infoMarkupFormId", effectiveMarkup.formId)
+      mv.getModel.put("infoMarkupTitle", effectiveMarkup.title)
 
       form.setEmail(user.email)
       form.setUrl(userInfo.url)
       form.setTown(userInfo.town)
       form.setName(user.getName)
       form.setInfo(userInfo.text)
+      form.setInfoMarkup(effectiveMarkup.formId)
 
       response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate")
 
@@ -119,6 +127,23 @@ class EditProfileController(
       val town = Option(form.getTown).filter(_.nonEmpty).map(StringUtil.escapeHtml).orNull
       val info = Option(form.getInfo).filter(_.nonEmpty).orNull
 
+      val infoMarkup = if info != null then
+        val formMarkup = Option(form.getInfoMarkup)
+          .filter(_.nonEmpty)
+          .flatMap { v =>
+            try Some(MarkupType.ofFormId(v))
+            catch case _: IllegalArgumentException => None
+          }
+          .getOrElse(currentUser.profile.formatMode)
+
+        val allowedFormats = UserPermissionService.allowedFormats(currentUser.user)
+        if !allowedFormats.contains(formMarkup) then
+          currentUser.profile.formatMode
+        else
+          formMarkup
+      else
+        currentUser.profile.formatMode
+
       val ipBlockInfo = ipBlockDao.getBlockInfo(request.getRemoteAddr)
       UserPermissionService.checkBlockIP(ipBlockInfo, errors, currentUser.user)
 
@@ -143,10 +168,12 @@ class EditProfileController(
 
       mv.getModel.put("canLoadUserpic", userPermissionService.canLoadUserpic)
       mv.getModel.put("canEditInfo", userPermissionService.canEditProfileInfo)
+      mv.getModel.put("infoMarkupFormId", infoMarkup.formId)
+      mv.getModel.put("infoMarkupTitle", infoMarkup.title)
 
       if !errors.hasErrors then
         if userPermissionService.canEditProfileInfo then
-          userService.updateUser(user, name, url, newEmail, town, newPassword, info, request.getRemoteAddr)
+          userService.updateUser(user, name, url, newEmail, town, newPassword, info, infoMarkup, request.getRemoteAddr)
         else
           userService.updateEmailPasswd(user, newEmail, newPassword, request.getRemoteAddr)
 
