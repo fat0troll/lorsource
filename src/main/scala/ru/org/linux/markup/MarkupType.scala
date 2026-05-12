@@ -15,61 +15,38 @@
 
 package ru.org.linux.markup
 
-sealed trait MarkupType extends Product with Serializable {
-  def id: String
-  def title: String
-  def formId: String
-  def deprecated: Boolean = false
-  def order: Int
-}
+enum MarkupType(val id: String, val title: String, val formId: String, val deprecated: Boolean = false)
+    extends Enum[MarkupType]:
+  case Markdown extends MarkupType(id = "MARKDOWN", title = "Markdown", formId = "markdown")
+  case Lorcode extends MarkupType(id = "BBCODE_TEX", title = "LORCODE", formId = "lorcode")
+  case LorcodeUlb extends MarkupType(id = "BBCODE_ULB", title = "User line break", formId = "ntobr", deprecated = true)
+  case Html extends MarkupType(id = "PLAIN", title = "HTML", formId = "plain")
 
-object MarkupType {
-  case object Html extends MarkupType {
-    override val id = "PLAIN"
-    override val title: String = "HTML"
-    override val formId: String = "plain"
-    override val order: Int = 4
-  }
+object MarkupType:
+  def of(v: String): MarkupType =
+    v match
+      case Html.id =>
+        Html
+      case Lorcode.id =>
+        Lorcode
+      case LorcodeUlb.id =>
+        LorcodeUlb
+      case Markdown.id =>
+        Markdown
+      case other =>
+        throw new IllegalArgumentException(s"Unsupported markup type $other")
 
-  case object Lorcode extends MarkupType {
-    override val id = "BBCODE_TEX"
-    override val title: String = "LORCODE"
-    override val formId: String = "lorcode"
-    override val order: Int = 2
-  }
+  def ofFormId(v: String): MarkupType =
+    v match
+      case Html.formId =>
+        Html
+      case Lorcode.formId =>
+        Lorcode
+      case LorcodeUlb.formId =>
+        LorcodeUlb
+      case Markdown.formId =>
+        Markdown
+      case other =>
+        throw new IllegalArgumentException(s"Unsupported markup type $other")
 
-  case object LorcodeUlb extends MarkupType {
-    override val id = "BBCODE_ULB"
-    override val title: String = "User line break"
-    override val formId: String = "ntobr"
-    override val deprecated = true
-    override val order: Int = 3
-  }
-
-  case object Markdown extends MarkupType {
-    override val id = "MARKDOWN"
-    override val title: String = "Markdown"
-    override val formId: String = "markdown"
-    override val order: Int = 1
-  }
-
-  def of(v: String): MarkupType = v match {
-    case Html.id       => Html
-    case Lorcode.id    => Lorcode
-    case LorcodeUlb.id => LorcodeUlb
-    case Markdown.id   => Markdown
-    case other         => throw new IllegalArgumentException(s"Unsupported markup type $other")
-  }
-
-  def ofFormId(v: String): MarkupType = v match {
-    case Html.formId       => Html
-    case Lorcode.formId    => Lorcode
-    case LorcodeUlb.formId => LorcodeUlb
-    case Markdown.formId   => Markdown
-    case other             => throw new IllegalArgumentException(s"Unsupported markup type $other")
-  }
-
-  val All: Set[MarkupType] = Set(Lorcode, LorcodeUlb, Markdown, Html)
-
-  val AllFormIds: Set[String] = All.map(_.formId)
-}
+  val AllFormIds: Set[String] = values.view.map(_.formId).toSet

@@ -565,12 +565,12 @@ public class HTMLFormatterTest {
 
   @Test
   public void testEmpty() {
-    assertTrue(textService.isEmpty(MessageText.apply("[br]", MarkupType.Lorcode$.MODULE$)));
-    assertTrue(textService.isEmpty(MessageText.apply("[br] ", MarkupType.Lorcode$.MODULE$)));
-    assertTrue(textService.isEmpty(MessageText.apply("[b] [br][/b][u] ", MarkupType.Lorcode$.MODULE$)));
-    assertTrue(textService.isEmpty(MessageText.apply("[list][*][br][br][*][u][/u][/list]", MarkupType.Lorcode$.MODULE$)));
-    assertTrue(textService.isEmpty(MessageText.apply("[url]   [/url][list][*][br][br][*][u][/u][/list][/url]", MarkupType.Lorcode$.MODULE$)));
-    assertFalse(textService.isEmpty(MessageText.apply("[code]text[/code]", MarkupType.Lorcode$.MODULE$)));
+    assertTrue(textService.isEmpty(MessageText.apply("[br]", MarkupType.Lorcode)));
+    assertTrue(textService.isEmpty(MessageText.apply("[br] ", MarkupType.Lorcode)));
+    assertTrue(textService.isEmpty(MessageText.apply("[b] [br][/b][u] ", MarkupType.Lorcode)));
+    assertTrue(textService.isEmpty(MessageText.apply("[list][*][br][br][*][u][/u][/list]", MarkupType.Lorcode)));
+    assertTrue(textService.isEmpty(MessageText.apply("[url]   [/url][list][*][br][br][*][u][/u][/list][/url]", MarkupType.Lorcode)));
+    assertFalse(textService.isEmpty(MessageText.apply("[code]text[/code]", MarkupType.Lorcode)));
   }
 
   @Test

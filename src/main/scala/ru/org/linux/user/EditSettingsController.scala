@@ -65,7 +65,7 @@ class EditSettingsController(profileDao: ProfileDao, userPermissionService: User
       else
         allFormats.filterNot(_.deprecated)
 
-    params.put("formatModes", allowedFormats.toSeq.sortBy(_.order).view.map(m => m.formId -> m.title).to(ListMap).asJava)
+    params.put("formatModes", allowedFormats.toSeq.sorted.view.map(m => m.formId -> m.title).to(ListMap).asJava)
 
     params.put("avatarsList", DefaultProfile.getAvatars.asJava)
 
