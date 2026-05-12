@@ -45,6 +45,6 @@ jobs:
           distribution: 'adopt'
           cache: maven
       - name: Build 
-        run: mvn --batch-mode -DskipTests=true -Dmaven.javadoc.skip=true package
+        run: mvn --batch-mode --no-transfer-progress -DskipTests=true -Dmaven.javadoc.skip=true package
       - name: Test
-        run: mvn --batch-mode verify
+        run: mvn --batch-mode --no-transfer-progress verify
