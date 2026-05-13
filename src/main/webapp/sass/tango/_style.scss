@@ -52,8 +52,12 @@ h3, h4, h5, h6 {
 }
 
 #bd h1,h2 {
-    margin-top: 0.5em;
-    margin-bottom: 0.3em;
+  margin-top: 0.5em;
+  margin-bottom: 0.3em;
+}
+
+#bd .msg header h1 {
+  margin-top: 0;
 }
 
 #bd .messages h2 {
