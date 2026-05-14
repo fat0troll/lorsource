@@ -104,7 +104,7 @@ class GroupListDao(ds: DataSource) {
   private val jdbcTemplate = new NamedParameterJdbcTemplate(ds)
 
   def getGroupTrackerTopics(groupid: Int, offset: Int, tagId: Option[Int])
-                           (implicit session: AnySession): collection.Seq[TopicsListItem] = {
+                           (using session: AnySession): collection.Seq[TopicsListItem] = {
     val dateFilter = ">CURRENT_TIMESTAMP-'6 month'::interval "
     val partFilter = s" AND topics.groupid = $groupid "
     val tagFilter = tagId.map(t => s" AND topics.id IN (SELECT msgid FROM tags WHERE tagid=$t) ").getOrElse("")
@@ -117,12 +117,13 @@ class GroupListDao(ds: DataSource) {
       commentInterval = "AND comments.postdate" + dateFilter,
       topicInterval = "t.postdate" + dateFilter,
       showIgnored = false,
-      showDeleted = false)
+      showDeleted = false,
+      showUncommited = false)
   }
 
   def getGroupListTopics(groupid: Int, offset: Int, showIgnored: Boolean, showDeleted: Boolean,
                          yearMonth: Option[(Int, Int)], tagId: Option[Int])
-                        (implicit session: AnySession): collection.Seq[TopicsListItem] = {
+                        (using session: AnySession): collection.Seq[TopicsListItem] = {
     val dateInterval: String = yearMonth.map { v =>
       val (year, month) = v
 
@@ -140,11 +141,12 @@ class GroupListDao(ds: DataSource) {
       commentInterval = "",
       topicInterval = "",
       showIgnored = showIgnored,
-      showDeleted = showDeleted)
+      showDeleted = showDeleted,
+      showUncommited = false)
   }
 
   def getSectionListTopics(section: Section, offset: Int, tagId: Int)
-                          (implicit session: AnySession): collection.Seq[TopicsListItem] = {
+                          (using session: AnySession): collection.Seq[TopicsListItem] = {
     val partFilter = s" AND section = ${section.id}"
     val tagFilter = s" AND topics.id IN (SELECT msgid FROM tags WHERE tagid=$tagId) "
 
@@ -156,11 +158,12 @@ class GroupListDao(ds: DataSource) {
       commentInterval = "",
       topicInterval = "",
       showIgnored = false,
-      showDeleted = false)
+      showDeleted = false,
+      showUncommited = false)
   }
 
   def getGroupStickyTopics(group: Group, tagId: Option[Int])
-                          (implicit session: AnySession): collection.Seq[TopicsListItem] = {
+                          (using session: AnySession): collection.Seq[TopicsListItem] = {
     val partFilter = s" AND topics.groupid = ${group.id} AND topics.sticky "
     val tagFilter = tagId.map(t => s" AND topics.id IN (SELECT msgid FROM tags WHERE tagid=$t) ").getOrElse("")
 
@@ -172,11 +175,12 @@ class GroupListDao(ds: DataSource) {
       commentInterval = "",
       topicInterval = "",
       showIgnored = true,
-      showDeleted = false)
+      showDeleted = false,
+      showUncommited = false)
   }
 
   def getTrackerTopics(filter: TrackerFilterEnum, offset: Int)
-                      (implicit session: AnySession): collection.Seq[TopicsListItem] = {
+                      (using session: AnySession): collection.Seq[TopicsListItem] = {
     val partFilter = filter match {
       case TrackerFilterEnum.NOTALKS =>
         " AND not topics.groupid = 8404 "
@@ -197,12 +201,13 @@ class GroupListDao(ds: DataSource) {
       commentInterval = "AND comments.postdate" + dateFilter,
       topicInterval = "t.postdate" + dateFilter,
       showIgnored = false,
-      showDeleted = false)
+      showDeleted = false,
+      showUncommited = filter == TrackerFilterEnum.ALL || session.moderator || session.corrector)
   }
 
   private def load(partFilter: String, topics: Int, offset: Int, orderColumn: String,
                    commentInterval: String, topicInterval: String, showIgnored: Boolean,
-                   showDeleted: Boolean)(implicit session: AnySession): collection.Seq[TopicsListItem] = {
+                   showDeleted: Boolean, showUncommited: Boolean)(using session: AnySession): collection.Seq[TopicsListItem] = {
     // если сортируем по топику, то можно заранее отобрать нужные топики,
     // до получения даты последнего комментария
     val (innerSortLimit, outerSortLimit) = if (orderColumn == "topic_postdate") {
@@ -231,8 +236,6 @@ class GroupListDao(ds: DataSource) {
     }
 
     val noHidden = if (session.authorized) "" else s" AND topics.open_warnings <= $TopicMaxWarnings "
-
-    val showUncommited = session.moderator || session.corrector
 
     val partUncommited = if (showUncommited) "" else GroupListDao.NoUncommited
 
