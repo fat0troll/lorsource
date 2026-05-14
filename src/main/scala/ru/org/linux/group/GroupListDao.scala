@@ -183,11 +183,11 @@ class GroupListDao(ds: DataSource) {
                       (using session: AnySession): collection.Seq[TopicsListItem] = {
     val partFilter = filter match {
       case TrackerFilterEnum.NOTALKS =>
-        " AND not topics.groupid = 8404 "
+        " AND not topics.groupid = 8404 AND not topics.notop "
       case TrackerFilterEnum.MAIN =>
-        " AND not topics.groupid in " + NonTech.mkString("(", ", ",")") + " "
+        " AND not topics.groupid in " + NonTech.mkString("(", ", ",")") + " AND not topics.notop "
       case TrackerFilterEnum.TECH =>
-        " AND not topics.groupid in " + NonTech.mkString("(", ", ",")") + " AND section=2 "
+        " AND not topics.groupid in " + NonTech.mkString("(", ", ",")") + " AND not topics.notop AND section=2 "
       case _ => ""
     }
 
