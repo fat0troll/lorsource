@@ -346,9 +346,9 @@ class UserEventDao(ds: DataSource, val transactionManager: PlatformTransactionMa
 
       val userIds = (if (parentComment.isDefined) {
         params.put("parent_author", parentComment.get.userid)
-        namedJdbcTemplate.queryForList("SELECT memories.userid FROM memories WHERE memories.topic = :topic AND :userid != memories.userid AND memories.userid != :parent_author " + "AND NOT EXISTS (SELECT ignore_list.userid FROM ignore_list WHERE ignore_list.userid=memories.userid AND ignored IN (select get_branch_authors(:id))) AND watch", params, classOf[Integer])
+        namedJdbcTemplate.queryForList(s"SELECT memories.userid FROM memories WHERE memories.topic = :topic AND :userid != memories.userid AND memories.userid != :parent_author AND memories.userid != ${UserConstants.ANONYMOUS_ID} " + "AND NOT EXISTS (SELECT ignore_list.userid FROM ignore_list WHERE ignore_list.userid=memories.userid AND ignored IN (select get_branch_authors(:id))) AND watch", params, classOf[Integer])
       } else {
-        namedJdbcTemplate.queryForList("SELECT memories.userid FROM memories WHERE memories.topic = :topic AND :userid != memories.userid AND NOT EXISTS (SELECT ignore_list.userid FROM ignore_list WHERE ignore_list.userid=memories.userid AND ignored=:userid) AND watch", params, classOf[Integer])
+        namedJdbcTemplate.queryForList(s"SELECT memories.userid FROM memories WHERE memories.topic = :topic AND :userid != memories.userid AND memories.userid != ${UserConstants.ANONYMOUS_ID} AND NOT EXISTS (SELECT ignore_list.userid FROM ignore_list WHERE ignore_list.userid=memories.userid AND ignored=:userid) AND watch", params, classOf[Integer])
       }).asScala
 
       if (userIds.nonEmpty) {
