@@ -20,6 +20,7 @@ import org.springframework.scala.transaction.support.TransactionManagement
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.transaction.PlatformTransactionManager
+import ru.org.linux.section.SectionController.NonTech
 
 import javax.sql.DataSource
 
@@ -37,8 +38,8 @@ class ScoreUpdater(ds: DataSource, val transactionManager: PlatformTransactionMa
       "(select distinct comments.userid from comments, topics " +
       "where comments.postdate>CURRENT_TIMESTAMP-'2 days'::interval " +
       "and topics.id=comments.topic and " +
-      "not groupid in (8404, 4068, 9326, 19405) and " +
-      "not comments.deleted and not topics.deleted)")
+      "not groupid in " + NonTech.mkString("(", ", ",")") + " and " +
+      "not comments.deleted and not topics.deleted and not topics.notop)")
 
     updateMaxScore()
   }
