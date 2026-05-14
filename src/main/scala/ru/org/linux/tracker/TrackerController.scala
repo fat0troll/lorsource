@@ -26,7 +26,6 @@ import ru.org.linux.user.{UserErrorException, UserService}
 
 import java.net.URLEncoder
 import scala.jdk.CollectionConverters.*
-import scala.jdk.OptionConverters.RichOptional
 
 @Controller
 class TrackerController(groupListDao: GroupListDao, userService: UserService, ipBlockDao: IPBlockDao,
@@ -41,7 +40,7 @@ class TrackerController(groupListDao: GroupListDao, userService: UserService, ip
     val redirectView = new RedirectView("/tracker/")
 
     redirectView.setExposeModelAttributes(false)
-    val filter = TrackerFilterEnum.getByValue(filterAction).toScala
+    val filter = TrackerFilterEnum.getByValue(filterAction)
 
     if (!filter.contains(defaultFilter)) {
       redirectView.setUrl("/tracker/?filter=" + URLEncoder.encode(filterAction, "UTF-8"))
@@ -52,12 +51,12 @@ class TrackerController(groupListDao: GroupListDao, userService: UserService, ip
 
   private def makeTitle(filter: TrackerFilterEnum, defaultFilter: TrackerFilterEnum) =
     if (filter != defaultFilter)
-      "Последние сообщения (" + filter.getLabel + ")"
+      "Последние сообщения (" + filter.label + ")"
     else
       "Последние сообщения"
 
   private def buildTrackerUrl(offset: Int, filter: Option[TrackerFilterEnum]): String = {
-    val additionalQuery = filter.map("filter=" + _.getValue)
+    val additionalQuery = filter.map("filter=" + _.value)
 
     if (offset > 0) {
       s"/tracker/?offset=$offset${additionalQuery.map("&amp;" + _).getOrElse("")}"
@@ -74,11 +73,11 @@ class TrackerController(groupListDao: GroupListDao, userService: UserService, ip
     if (offset < 0 || offset > 300) throw new UserErrorException("Некорректное значение offset")
 
     val defaultFilter = session.profile.trackerMode
-    val trackerFilter = TrackerFilterEnum.getByValue(filterAction).orElse(defaultFilter)
+    val trackerFilter = TrackerFilterEnum.getByValue(filterAction).getOrElse(defaultFilter)
 
     val params = new java.util.HashMap[String, AnyRef]
 
-    params.put("filter", trackerFilter.getValue)
+    params.put("filter", trackerFilter.value)
 
     params.put("defaultFilter", defaultFilter)
 

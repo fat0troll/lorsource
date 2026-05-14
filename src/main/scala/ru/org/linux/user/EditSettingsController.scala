@@ -50,7 +50,7 @@ class EditSettingsController(profileDao: ProfileDao, userPermissionService: User
     else
       params.put("stylesList", nonDeprecatedThemes.asJava)
 
-    params.put("trackerModes", TrackerFilterEnum.values.filter(_.isCanBeDefault))
+    params.put("trackerModes", TrackerFilterEnum.values.filter(_.canBeDefault))
 
     params.put("topicsValues", (DefaultProfile.TopicsValues + currentUser.profile.topics).toSeq.sorted.asJava)
     params.put("messagesValues", (DefaultProfile.CommentsValues + currentUser.profile.messages).toSeq.sorted.asJava)
@@ -107,7 +107,7 @@ class EditSettingsController(profileDao: ProfileDao, userPermissionService: User
     builder.setFormatMode(formatMode)
     builder.setStyle(request.getParameter("style"))
     builder.setOldTracker("on" == request.getParameter("oldTracker"))
-    builder.setTrackerMode(TrackerFilterEnum.getByValue(request.getParameter("trackerMode")).orElse(DefaultProfile.DefaultTrackerMode))
+    builder.setTrackerMode(TrackerFilterEnum.getByValue(request.getParameter("trackerMode")).getOrElse(DefaultProfile.DefaultTrackerMode))
 
     val avatar = request.getParameter("avatar")
     if (!DefaultProfile.getAvatars.contains(avatar)) {

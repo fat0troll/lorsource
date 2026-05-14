@@ -45,7 +45,7 @@ class ProfileBuilder(profile: Profile):
     p.setBoolean(DefaultProfile.HideAdsenseProperty, hideAdsense)
     p.setBoolean(DefaultProfile.MainGalleryProperty, showGalleryOnMain)
     p.setString(DefaultProfile.AvatarProperty, avatarMode)
-    p.setString(DefaultProfile.TrackerMode, trackerMode.getValue)
+    p.setString(DefaultProfile.TrackerMode, trackerMode.value)
     p.setBoolean(DefaultProfile.OldTracker, oldTracker)
     p.setBoolean(DefaultProfile.ReactionNotificationProperty, reactionNotification)
 

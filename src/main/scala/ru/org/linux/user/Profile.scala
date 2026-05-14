@@ -51,7 +51,7 @@ object Profile {
       hideAdsense = p.getBoolean(HideAdsenseProperty),
       showGalleryOnMain = p.getBoolean(MainGalleryProperty),
       avatarMode = p.getString(AvatarProperty),
-      trackerMode = TrackerFilterEnum.getByValue(p.getString(TrackerMode)).filter(_.isCanBeDefault).orElse(DefaultProfile.DefaultTrackerMode),
+      trackerMode = TrackerFilterEnum.getByValue(p.getString(TrackerMode)).filter(_.canBeDefault).getOrElse(DefaultProfile.DefaultTrackerMode),
       oldTracker = p.getBoolean(OldTracker),
       reactionNotification = p.getBoolean(ReactionNotificationProperty))
   }
