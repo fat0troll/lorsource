@@ -13,7 +13,6 @@
  *    limitations under the License.
  */
 package ru.org.linux.topic
-import ru.org.linux.user.UserConstants
 
 import com.typesafe.scalalogging.StrictLogging
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -57,11 +56,7 @@ object TopicListDao {
       where.append(" AND groupid=:groupId")
       paramsBuilder.put("groupId", Integer.valueOf(request.getGroup))
     }
-
-    if (!request.isIncludeAnonymous) {
-      where.append(s" AND topics.userid != ${UserConstants.ANONYMOUS_ID}")
-    }
-
+    
     val dateField = if (request.getCommitMode == COMMITED_ONLY) "commitdate" else "postdate"
 
     request.getDateLimitType match {
@@ -203,10 +198,9 @@ class TopicListDao(ds: DataSource) extends StrictLogging {
    *
    * @param sectionId     номер раздела или 0 для всех премодерируемых
    * @param skipBadReason Пропускать темы, удаленные с пустым комментарием и спам
-   * @param includeAnonymous включать ли в выборку темы, созданные anonymous
    * @return список удаленных тем
    */
-  def getDeletedTopics(sectionId: Int, skipBadReason: Boolean, includeAnonymous: Boolean): Seq[DeletedTopic] = {
+  def getDeletedTopics(sectionId: Int, skipBadReason: Boolean): Seq[DeletedTopic] = {
     val query = new StringBuilder
 
     query
@@ -221,10 +215,6 @@ class TopicListDao(ds: DataSource) extends StrictLogging {
 
     if (skipBadReason) {
       query.append("AND reason!='' AND reason!='Блокировка пользователя с удалением сообщений' AND reason!='4.6 Спам' ")
-    }
-
-    if (!includeAnonymous) {
-      query.append("AND topics.userid != " + UserConstants.ANONYMOUS_ID + " ")
     }
 
     val queryParameters = mutable.ArrayBuffer[AnyRef]()

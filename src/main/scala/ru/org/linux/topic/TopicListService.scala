@@ -193,7 +193,7 @@ class TopicListService(tagService: TagService, topicListDao: TopicListDao, secti
     topicListDao.getTopics(topicListDto, NonAuthorizedSession)
   }
 
-  def getUncommitedTopic(section: Option[Section], fromDate: Date, includeAnonymous: Boolean): collection.Seq[Topic] = {
+  def getUncommitedTopic(section: Option[Section], fromDate: Date): collection.Seq[Topic] = {
     val topicListDto = new TopicListDto
 
     topicListDto.setCommitMode(CommitMode.UNCOMMITED_ONLY)
@@ -204,13 +204,12 @@ class TopicListService(tagService: TagService, topicListDao: TopicListDao, secti
 
     topicListDto.setDateLimitType(TopicListDto.DateLimitType.FROM_DATE)
     topicListDto.setFromDate(fromDate)
-    topicListDto.setIncludeAnonymous(includeAnonymous)
 
     topicListDao.getTopics(topicListDto, NonAuthorizedSession)
   }
 
-  def getDeletedTopics(sectionId: Int, skipBadReason: Boolean, includeAnonymous: Boolean): Seq[DeletedTopic] =
-    topicListDao.getDeletedTopics(sectionId, skipBadReason, includeAnonymous)
+  def getDeletedTopics(sectionId: Int, skipBadReason: Boolean): Seq[DeletedTopic] =
+    topicListDao.getDeletedTopics(sectionId, skipBadReason)
 
   def getMainPageFeed(count: Int)
                      (using session: AnySession): collection.Seq[Topic] = {

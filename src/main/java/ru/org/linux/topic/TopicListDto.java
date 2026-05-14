@@ -60,7 +60,6 @@ public class TopicListDto {
   private boolean tech = false;
 
   private boolean showDraft = false;
-  private boolean includeAnonymous = true;
   
   public ImmutableSet<Integer> getSections() {
     return sections;
@@ -180,13 +179,5 @@ public class TopicListDto {
 
   public void setShowDraft(boolean showDraft) {
     this.showDraft = showDraft;
-  }
-
-  public boolean isIncludeAnonymous() {
-    return includeAnonymous;
-  }
-
-  public void setIncludeAnonymous(boolean includeAnonymous) {
-    this.includeAnonymous = includeAnonymous;
   }
 }
