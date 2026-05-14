@@ -75,24 +75,28 @@
   Group group = preparedMessage.getGroup();
 %>
 
-<c:if test="${multiPortal}">
-<div class="group">
-    ${preparedMessage.section.title} — ${preparedMessage.group.title}
-  <c:if test="${not message.commited and preparedMessage.section.premoderated}">
-    <c:out value=" "/><span>(не подтверждено)</span>
-  </c:if>
-</div>
-</c:if>
+<header>
+  <c:if test="${multiPortal}">
+    <div class="group">
+      <a href="${preparedMessage.section.sectionLink}">${preparedMessage.section.title}</a> —
+      <a href="${preparedMessage.group.url}">${preparedMessage.group.title}</a>
 
-<h1>
-  <c:if test="${message.resolved}">
-   <i class="icon-check" title="решено"></i>
+      <c:if test="${not message.commited and preparedMessage.section.premoderated}">
+        <c:out value=" "/><span>(не подтверждено)</span>
+      </c:if>
+    </div>
   </c:if>
 
-  <a href="${fn:escapeXml(message.link)}">
-    <l:title>${message.title}</l:title>
-  </a>
-</h1>
+  <h1>
+    <c:if test="${message.resolved}">
+     <i class="icon-check" title="решено"></i>
+    </c:if>
+
+    <a href="${fn:escapeXml(message.link)}">
+      <l:title>${message.title}</l:title>
+    </a>
+  </h1>
+</header>
 
 <c:if test="${not empty preparedMessage.tags}">
   <l:tags list="${preparedMessage.tags}"/>
