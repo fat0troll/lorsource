@@ -72,6 +72,27 @@ All users in test development database has password 'passwd'. Use following user
 * Shaman007: corrector
 * edo: user (score >= 50)
 
+### JavaScript & CSS Build
+
+This project uses **Maven-only** frontend tooling — no Node.js, npm, or package.json is required.
+
+**CSS Pipeline:**
+- Source: `src/main/webapp/sass/*.scss` (Sass source files)
+- `dart-sass-maven-plugin` (phase: `generate-resources`) compiles Sass to CSS in compressed style
+- `yuicompressor-maven-plugin` (phase: `generate-resources`) minifies CSS and aggregates per-theme `combined.css` bundles.
+- `maven-war-plugin` excludes raw source CSS from the final WAR; only minified/aggregated copies are included
+
+**JS Pipeline:**
+- Custom JS source: `src/main/webapp/js/`
+- `closure-compiler-maven-plugin` (phase: `generate-resources` / `process-resources`):
+  - Merges `js/lor/*.js` into a single `lor.js`
+  - Minifies individual files: `add-form.js`, `lor_view_diff_history.js`, `realtime.js`, `tagsAutocomplete.js`
+  - Minifies individual plugins: `jquery.hotkeys.js`, `pattern.js`
+- `maven-dependency-plugin` (phase: `generate-sources`) unpacks third-party JS libraries from WebJar dependencies
+- `maven-antrun-plugin` (phase: `compile`) concatenates WebJar libraries into `plugins.js`
+- Pre-minified files are copied as-is
+- `maven-war-plugin` excludes raw source JS from the final WAR; only processed copies are included
+
 ### Other Commands
 ```bash
 mvn clean                 # Clean target directory
@@ -153,11 +174,25 @@ mvn dependency:tree      # Show dependency tree
 src/
 ├── main/
 │   ├── java/ru/org/linux/          # Java sources
-│   └── scala/ru/org/linux/         # Scala sources
+│   ├── scala/ru/org/linux/         # Scala sources
+│   └── webapp/                     # Web application root (Maven WAR)
+│       ├── js/                     # JavaScript source files
+│       │   └── lor/                # Modular JS → merged into lor.js
+│       ├── sass/                   # SASS source files (compiled to CSS)
+│       ├── WEB-INF/                # JSP templates, Spring configs, web.xml
+│       ├── help/                   # Help documentation pages (markdown)
+│       ├── img/                    # Site images
+│       ├── font/                   # Web fonts
+│       ├── black/                  # Theme: Black (ir_black.css + static assets)
+│       ├── tango/                  # Theme: Tango (syntax.css + static assets)
+│       ├── waltz/                  # Theme: Waltz (syntax.css + static assets)
+│       ├── white2/                 # Theme: White2 (idea.css + static assets)
+│       ├── zomg_ponies/            # Theme: ZOMG Ponies (static assets)
+│       └── qrerror/                # Standalone 502 error page for CDN (self-contained, no external references)
 ├── test/
 │   ├── java/ru/org/linux/          # Java test sources
 │   ├── scala/ru/org/linux/         # Scala test sources
-│   └── resources/                   # Test resources (spring configs, etc.)
+│   └── resources/                  # Test resources (spring configs, etc.)
 ```
 
 ## IDE Recommendations
