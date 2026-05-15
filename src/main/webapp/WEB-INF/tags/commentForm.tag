@@ -132,7 +132,7 @@
 
   <div class="form-actions">
   <button type=submit class="btn btn-primary">Поместить</button>
-  <button type=submit name=preview class="btn btn-default preview-button-js-hidden">Предпросмотр</button>
+  <button type=submit name=preview class="btn btn-default">Предпросмотр</button>
   <c:if test="${cancel!=null && cancel}">
     <c:choose>
       <%-- Для режима редактирования --%>
