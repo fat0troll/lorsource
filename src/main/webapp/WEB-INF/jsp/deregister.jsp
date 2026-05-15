@@ -24,7 +24,7 @@
 <jsp:include page="header.jsp"/>
 <H1>Удаление пользователя</H1>
 <p>
-Аккаунт становится недоступен для входа<%--, все сообщения переходят к специальному пользователю--%>.
+Аккаунт становится недоступен для входа.
 </p>
 
 <form:form modelAttribute="form" method="POST" action="deregister.jsp" id="registerForm">

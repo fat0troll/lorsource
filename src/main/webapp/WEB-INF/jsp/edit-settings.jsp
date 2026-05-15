@@ -165,7 +165,7 @@ $script.ready('jquery', function() {
 </c:if>
 <li><a href="/people/${nick}/edit">Изменение регистрации</a></li>
 <li><a href="<c:url value="/user-filter"/>">Настройка фильтрации сообщений</a>
-<c:if test="${currentUser.score >= 100 && !template.moderatorSession && !currentUser.administrator && !currentUser.frozen}">
+<c:if test="${currentUser.maxScore >= 100 && !template.moderatorSession && !currentUser.administrator && !currentUser.frozen}">
   <li><a href="/deregister.jsp">Удаление аккаунта</a>
 </c:if>
 </ul>
