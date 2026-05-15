@@ -5,6 +5,9 @@
 This is a Java 21 + Scala 3 web application (WAR) for Linux.org.ru. It uses Maven for build,
 Spring Framework, and includes both unit and integration tests.
 
+Project uses PostgreSQL 16 database, Opensearch 3.x for full text seach and analytics. It contains embedded
+ActiveMQ.
+
 ## Build Commands
 
 ### Building the Project
@@ -71,6 +74,10 @@ All users in test development database has password 'passwd'. Use following user
 * svu: moderator
 * Shaman007: corrector
 * edo: user (score >= 50)
+
+### Test/Development Database
+
+Integration tests and development web server uses pre-installed PostgreSQL at `postgresql:///lor`.
 
 ### JavaScript & CSS Build
 
