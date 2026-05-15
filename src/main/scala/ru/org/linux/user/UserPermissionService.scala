@@ -65,7 +65,7 @@ class UserPermissionService(userLogDao: UserLogDao, userInvitesDao: UserInvitesD
     !userLogDao.hasRecentSelfEvent(user, Duration.ofDays(7), UserLogAction.SENT_PASSWORD_RESET)
   }
 
-  def canInvite(implicit session: AuthorizedSession): Boolean = session.moderator || {
+  def canInvite(implicit session: AuthorizedSession): Boolean = false /*session.moderator || {
     lazy val (totalInvites, userInvites) = userInvitesDao.countValidInvites(session.user)
     lazy val userScoreLoss = deleteInfoDao.getRecentScoreLoss(session.user)
 
@@ -73,7 +73,7 @@ class UserPermissionService(userLogDao: UserLogDao, userInvitesDao: UserInvitesD
       totalInvites < MaxTotalInvites &&
       userInvites < MaxUserInvites &&
       userScoreLoss < MaxInviteScoreLoss
-  }
+  }*/
 
   def canRegister(remoteAddr: String): Boolean = !ipBlockDao.getBlockInfo(remoteAddr).isBlocked &&
     userDao.countUnactivated(remoteAddr) < MaxUnactivatedPerIp
