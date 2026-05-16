@@ -1,7 +1,7 @@
 <%@ page session="false" %>
 <%@ page contentType="text/html; charset=utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib tagdir="/WEB-INF/tags" prefix="lor" %>
 <%--
   ~ Copyright 1998-2026 Linux.org.ru
   ~    Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@
         <p>К сожалению, пользователь <b><c:out value="${exception.user.nick}" escapeXml="true"/></b> не может более посещать LOR, </p>
         <c:choose>
             <c:when test="${not empty exception.banInfo.date}">
-                <p>начиная с <fmt:formatDate value="${exception.banInfo.date}" type="both" pattern="dd.MM.yyyy HH:mm:ss"/>.</p>
+                <p>начиная с <lor:date date="${exception.banInfo.date}"/>.</p>
             </c:when>
             <c:otherwise>
                 <p>причём забанен он был настолько давно, что никто уже и не помнит, когда.</p>
