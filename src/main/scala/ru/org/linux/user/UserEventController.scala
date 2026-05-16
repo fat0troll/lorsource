@@ -166,53 +166,52 @@ class UserEventController(feedView: UserEventFeedView, userService: UserService,
         throw new BadInputException("некорректное имя пользователя")
       }
 
-      if (currentUser.user.nick == nick) {
-        return new ModelAndView(new RedirectView("/notifications"))
-      }
+      if currentUser.user.nick == nick then
+        new ModelAndView(new RedirectView("/notifications"))
+      else
+        if (!currentUser.moderator) {
+          throw new AccessViolationException("нельзя смотреть чужие уведомления")
+        }
 
-      if (!currentUser.moderator) {
-        throw new AccessViolationException("нельзя смотреть чужие уведомления")
-      }
+        val eventFilter = UserEventFilterEnum.fromNameOrDefault(filter)
 
-      val eventFilter = UserEventFilterEnum.fromNameOrDefault(filter)
+        val params = mutable.Map[String, Any]()
 
-      val params = mutable.Map[String, Any]()
+        params.put("filter", eventFilter.getName)
+        if (eventFilter != UserEventFilterEnum.ALL) {
+          params.put("addition_query", s"&filter=${eventFilter.getName}")
+        } else {
+          params.put("addition_query", "")
+        }
 
-      params.put("filter", eventFilter.getName)
-      if (eventFilter != UserEventFilterEnum.ALL) {
-        params.put("addition_query", s"&filter=${eventFilter.getName}")
-      } else {
-        params.put("addition_query", "")
-      }
+        params.put("nick", nick)
+        params.put("link", s"/show-replies.jsp?nick=$nick")
 
-      params.put("nick", nick)
-      params.put("link", s"/show-replies.jsp?nick=$nick")
+        val offset = if (offsetRaw < 0) {
+          0
+        } else {
+          offsetRaw
+        }
 
-      val offset = if (offsetRaw < 0) {
-        0
-      } else {
-        offsetRaw
-      }
+        val firstPage = offset == 0
 
-      val firstPage = offset == 0
+        val topics = currentUser.profile.topics
 
-      val topics = currentUser.profile.topics
+        params.put("firstPage", firstPage)
+        params.put("topics", topics)
+        params.put("offset", offset)
 
-      params.put("firstPage", firstPage)
-      params.put("topics", topics)
-      params.put("offset", offset)
+        val user = userService.getUser(nick)
+        params.put("filterValues", userEventService.getEventTypes(user).asJava)
 
-      val user = userService.getUser(nick)
-      params.put("filterValues", userEventService.getEventTypes(user).asJava)
+        val list = userEventService.getUserEvents(user, showPrivate = true, topics, offset, eventFilter)
+        val prepared = prepareService.prepareSimple(list, withText = false)
 
-      val list = userEventService.getUserEvents(user, showPrivate = true, topics, offset, eventFilter)
-      val prepared = prepareService.prepareSimple(list, withText = false)
+        params.put("isMyNotifications", false)
+        params.put("topicsList", prepared.asJava)
+        params.put("hasMore", list.size == topics)
 
-      params.put("isMyNotifications", false)
-      params.put("topicsList", prepared.asJava)
-      params.put("hasMore", list.size == topics)
-
-      new ModelAndView("show-replies", params.asJava)
+        new ModelAndView("show-replies", params.asJava)
     }
 
   @RequestMapping(value = Array("/show-replies.jsp"), method = Array(RequestMethod.GET, RequestMethod.HEAD), params = Array("output"))
