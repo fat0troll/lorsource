@@ -273,6 +273,9 @@ $script.ready('jquery', function() {
       const moveAndShowForm = (selector, replyToValue) => {
         const replyTo = $("input[name='replyto']", commentFormContainer);
         if (replyTo.val() !== String(replyToValue)) {
+          commentForm.find("#msg").val('');
+          clearErrors(commentForm);
+          resetCaptcha();
           commentFormContainer.hide();
         }
 
@@ -376,11 +379,10 @@ $script.ready('jquery', function() {
     window.addEventListener('beforeunload', warnOnUnloadComment);
 
     if (isInline) {
-      commentForm.on("reset", () => {
+      commentForm.on("reset", (e) => {
+        e.preventDefault();
+        clearErrors(commentForm);
         commentFormContainer.slideUp('slow');
-      });
-    } else {
-      commentForm.on("reset", () => {
       });
     }
 
