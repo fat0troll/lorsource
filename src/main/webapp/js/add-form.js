@@ -37,7 +37,7 @@ window.setupFormWithSpinner = function(options) {
       const $textarea = $(options.textareaSelector);
       let submitted = false;
 
-      initPreviewTabs($form[0], false);
+      initPreviewTabs($form[0]);
 
       const warnOnUnload = (e) => {
         if ($textarea.val() !== '' && !submitted) {
@@ -78,7 +78,7 @@ window.setupFormWithSpinner = function(options) {
   });
 };
 
-function initPreviewTabs(formElement, hidePreviewButton) {
+function initPreviewTabs(formElement) {
   const formatGroup = formElement.querySelector('[data-format-mode]');
   if (!formatGroup) return;
 
@@ -108,15 +108,13 @@ function initPreviewTabs(formElement, hidePreviewButton) {
   previewPanel.className = 'markup-tabs__panel';
   previewPanel.dataset.panel = 'preview';
   const previewContent = document.createElement('div');
-  previewContent.className = hidePreviewButton ? 'markup-preview' : 'markup-preview msg_body';
+  previewContent.className = 'markup-preview';
   previewPanel.appendChild(previewContent);
   panelsContainer.appendChild(previewPanel);
 
-  if (hidePreviewButton) {
-    const previewButton = formElement.querySelector('button[name=preview]');
-    if (previewButton) {
-      previewButton.classList.add('preview-button-js-hidden');
-    }
+  const previewButton = formElement.querySelector('button[name=preview]');
+  if (previewButton) {
+    previewButton.classList.add('preview-button-js-hidden');
   }
 
   let textareaHeight = 0;
@@ -285,7 +283,7 @@ $script.ready('jquery', function() {
           replyTo.val(replyToValue);
 
           if (!commentForm[0].dataset.previewTabsInitialized) {
-            initPreviewTabs(commentForm[0], true);
+            initPreviewTabs(commentForm[0]);
             commentForm[0].dataset.previewTabsInitialized = 'true';
           }
 
@@ -361,7 +359,7 @@ $script.ready('jquery', function() {
       loadCaptcha();
       updateCsrf();
       if (!commentForm[0].dataset.previewTabsInitialized) {
-        initPreviewTabs(commentForm[0], true);
+        initPreviewTabs(commentForm[0]);
         commentForm[0].dataset.previewTabsInitialized = 'true';
       }
     }
