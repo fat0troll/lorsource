@@ -473,14 +473,14 @@ textarea.error {
     input[type='email'],
     input[type="password"] {
         width: 100%;
-        max-width: 60em;
+        max-width: 70em;
         box-sizing: border-box;
     }
 
     textarea {
         width: 100%;
-        max-width: 60em;
-        height: 10em;
+        max-width: 70em;
+        height: 20em;
         box-sizing: border-box;
     }
 }
@@ -492,7 +492,7 @@ textarea.error {
   textarea {
     height: 20em;
     width: 100%;
-    max-width: 60em;
+    max-width: 70em;
     box-sizing: border-box;
   }
 
@@ -500,7 +500,7 @@ textarea.error {
   input[type='url'],
   input[type="password"] {
     width: 100%;
-    max-width: 60em;
+    max-width: 70em;
     box-sizing: border-box;
   }
 }
