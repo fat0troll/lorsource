@@ -20,10 +20,6 @@
 html {
   text-size-adjust: none;
   -webkit-text-size-adjust: none;
-
-  @include respond-to(widedesktop) {
-    font-size: 1.125em;
-  }
 }
 
 body {
