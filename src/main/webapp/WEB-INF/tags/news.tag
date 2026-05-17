@@ -96,11 +96,12 @@
       <l:title>${message.title}</l:title>
     </a>
   </h1>
+
+  <c:if test="${not empty preparedMessage.tags}">
+    <l:tags list="${preparedMessage.tags}"/>
+  </c:if>
 </header>
 
-<c:if test="${not empty preparedMessage.tags}">
-  <l:tags list="${preparedMessage.tags}"/>
-</c:if>
 
 <c:if test="${fn:length(preparedMessage.allImages) == 1}">
   <lor:image title="${preparedMessage.message.title}" image="${preparedMessage.allImages[0]}" sizes="(min-width: 47em) 40vw, 100vw"
